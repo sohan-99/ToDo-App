@@ -3,17 +3,17 @@
     {
       "id": "1",
       "title": "Learn Zustand",
-      "completed": false
+      "completed": true
     },
     {
       "id": "2",
       "title": "Learn RTK Query",
-      "completed": false
+      "completed": true
     },
     {
       "id": "3",
       "title": "Set up Next.js project",
-      "completed": false
+      "completed": true
     },
     {
       "id": "4",
@@ -23,22 +23,22 @@
     {
       "id": "5",
       "title": "Connect Zustand store",
-      "completed": true
+      "completed": false
     },
     {
       "id": "9",
       "title": "Delete Todo item",
-      "completed": true
+      "completed": false
     },
     {
       "id": "10",
       "title": "Style with Tailwind CSS",
-      "completed": true
+      "completed": false
     },
     {
       "id": "e174",
-      "title": "going to merket in pm",
-      "completed": true
+      "title": "Going to market in 6 pm.",
+      "completed": false
     }
   ]
 }
