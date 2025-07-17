@@ -1,0 +1,44 @@
+{
+  "todos": [
+    {
+      "id": "1",
+      "title": "Learn Zustand",
+      "completed": false
+    },
+    {
+      "id": "2",
+      "title": "Learn RTK Query",
+      "completed": false
+    },
+    {
+      "id": "3",
+      "title": "Set up Next.js project",
+      "completed": false
+    },
+    {
+      "id": "4",
+      "title": "Create TodoList component",
+      "completed": false
+    },
+    {
+      "id": "5",
+      "title": "Connect Zustand store",
+      "completed": true
+    },
+    {
+      "id": "9",
+      "title": "Delete Todo item",
+      "completed": true
+    },
+    {
+      "id": "10",
+      "title": "Style with Tailwind CSS",
+      "completed": true
+    },
+    {
+      "id": "e174",
+      "title": "going to merket in pm",
+      "completed": true
+    }
+  ]
+}

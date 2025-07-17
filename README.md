@@ -1,36 +1,65 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+Project Overview
+This is a Todo application built with Next.js that uses both Redux Toolkit (RTK) Query for API calls and Zustand for local state management. The application allows users to create, read, update, and delete todo items.
 
-## Getting Started
+Tech Stack
+Next.js: React framework for building the frontend
+Redux Toolkit (RTK) Query: For API data fetching, caching, and state management
+Zustand: For local UI state management
+JSON Server: Backend mock API running on port 4000
+TailwindCSS: For styling
+Code Structure & Workflow
+1. Data Structure
+The application uses a simple Todo type defined in todo.ts:
 
-First, run the development server:
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+export interface ITodo {  id: number  title: string  completed: boolean}
+2. State Management
+The project uses a hybrid state management approach:
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+RTK Query (Redux Toolkit)
+In api.ts, RTK Query is used for API calls:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+getTodos: Fetches all todos from the server
+addTodo: Creates a new todo
+deleteTodo: Removes a todo by ID
+updateTodo: Updates an existing todo
+The Redux store is configured in index.ts and includes the todos API reducer.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Zustand Store
+In store.ts, a Zustand store manages the local UI state:
 
-## Learn More
+Tracks the input value for creating new todos
+Provides methods to set and reset the input value
+3. Components
+The main component is ToDoList.tsx which:
 
-To learn more about Next.js, take a look at the following resources:
+Uses the RTK Query hooks to fetch and manipulate todos
+Uses Zustand store for managing input state
+Implements all CRUD operations:
+Add new todos
+Toggle todo completion status
+Edit todo titles
+Delete todos
+Handles edit mode UI state with React's useState
+4. Application Structure
+page.tsx: The main page that renders the TodoList component
+layout.tsx: The root layout that wraps the application with the Redux Provider
+db.json: The mock database file used by JSON Server
+5. Data Flow
+The application starts by rendering the ToDoList component in page.tsx
+The component fetches todos from the JSON Server using RTK Query's useGetTodosQuery
+When a user adds, edits, or deletes a todo:
+The corresponding RTK Query mutation hook is called
+The mutation updates the server data via JSON Server
+RTK Query automatically refetches the data and updates the UI
+6. Development Workflow
+To run the application:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Start the JSON Server: npm run json-server (runs on port 4000)
+Start the Next.js dev server: npm run dev (with Turbopack)
+Key Features
+API Data Management: Uses RTK Query for efficient API calls with automatic caching
+Local UI State: Uses Zustand for simple local state management
+CRUD Operations: Full create, read, update, delete functionality
+Responsive UI: Clean UI with TailwindCSS styling
+Edit Mode: Inline editing of todo items
