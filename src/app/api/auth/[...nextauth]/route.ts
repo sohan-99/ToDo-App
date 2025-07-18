@@ -1,5 +1,3 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import NextAuth from 'next-auth';
 import { connectToDatabase } from '@/lib/mongodb';
 import CredentialsProvider from 'next-auth/providers/credentials';
@@ -9,7 +7,7 @@ import type { NextAuthConfig } from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
 
 export const authConfig: NextAuthConfig = {
-  debug: true,
+  debug: process.env.NODE_ENV !== 'production',
   providers: [
     CredentialsProvider({
       id: 'credentials',
@@ -21,37 +19,21 @@ export const authConfig: NextAuthConfig = {
       async authorize(credentials) {
         try {
           if (!credentials?.email || !credentials?.password) {
-            // console.error('Missing credentials');
             return null;
           }
 
           await connectToDatabase();
 
           const user = await UserModel.findOne({ email: credentials.email });
-          // console.log("User found:", user ? "Yes" : "No");
-
-          if (!user) {
-            // console.error("User not found");
-            return null;
-          }
+          if (!user) return null;
 
           // Get the password as a string
           const passwordString = String(user.get('password'));
+          if (!passwordString) return null;
 
-          if (!passwordString) {
-            // console.error("User has no password");
-            return null;
-          }
-
-          const passwordInput =
-            typeof credentials.password === 'string' ? credentials.password : '';
+          const passwordInput = typeof credentials.password === 'string' ? credentials.password : '';
           const isValid = await verifyPassword(passwordInput, passwordString);
-          // console.log('Password validation:', isValid ? 'Valid' : 'Invalid');
-
-          if (!isValid) {
-            // console.error('Invalid password');
-            return null;
-          }
+          if (!isValid) return null;
 
           return {
             id: user._id.toString(),
@@ -59,8 +41,7 @@ export const authConfig: NextAuthConfig = {
             name: user.name,
             image: user.image,
           };
-        } catch (error) {
-          // console.error('Auth error:', error);
+        } catch {
           return null;
         }
       },
@@ -71,45 +52,42 @@ export const authConfig: NextAuthConfig = {
     }),
   ],
   callbacks: {
+    // Add user ID to token
     async jwt({ token, user }) {
-      if (user) {
-        token.id = user.id;
-      }
+      if (user) token.id = user.id;
       return token;
     },
+    // Add token ID to session user
     async session({ session, token }) {
-      if (token && session.user) {
-        session.user.id = token.id as string;
-      }
+      if (token && session.user) session.user.id = token.id as string;
       return session;
     },
-    async signIn({ user, account, profile }) {
-      if (account?.provider === 'google') {
-        try {
-          await connectToDatabase();
+    async signIn({ user, account }) {
+      // Always allow sign-in for non-Google providers
+      if (account?.provider !== 'google') return true;
 
-          // Check if user already exists
-          let dbUser = await UserModel.findOne({ email: user.email });
+      try {
+        await connectToDatabase();
 
-          // If user doesn't exist, create a new one
-          if (!dbUser) {
-            dbUser = await UserModel.create({
+        // Check if user already exists or create a new one
+        const dbUser = await UserModel.findOneAndUpdate(
+          { email: user.email },
+          {
+            $setOnInsert: {
               name: user.name,
               email: user.email,
-              image: user.image,
-              // No password needed for Google auth
-            });
-          }
+              image: user.image
+            }
+          },
+          { upsert: true, new: true }
+        );
 
-          // Update user ID to match our MongoDB ID
-          user.id = dbUser._id.toString();
-
-          return true;
-        } catch (error) {
-          // If there's an error, allow the sign-in to proceed but log the error
-          return true;
-        }
+        // Update user ID to match our MongoDB ID
+        user.id = dbUser._id.toString();
+      } catch {
+        // Silently handle errors and proceed with sign-in
       }
+
       return true;
     },
   },
@@ -137,6 +115,3 @@ export const authConfig: NextAuthConfig = {
 };
 
 export const { handlers, auth, signIn, signOut } = NextAuth(authConfig);
-
-// Export the request handlers for the Next.js route handler API
-export const { GET, POST } = handlers;
