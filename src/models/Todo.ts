@@ -31,5 +31,4 @@ const TodoSchema = new mongoose.Schema<IMongoTodo>(
   }
 );
 
-// Check if model is already defined to avoid 'Cannot overwrite' error in development
 export default mongoose.models.Todo || mongoose.model<IMongoTodo>('Todo', TodoSchema);

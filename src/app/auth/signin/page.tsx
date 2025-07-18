@@ -1,43 +1,43 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-"use client";
+'use client';
 
-import { useState } from "react";
-import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
+import { useState } from 'react';
+import { signIn } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 export default function SignIn() {
   const router = useRouter();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    setError("");
+    setError('');
 
     try {
-      const result = await signIn("credentials", {
+      const result = await signIn('credentials', {
         redirect: false,
         email,
         password,
-        callbackUrl: "/",
+        callbackUrl: '/',
       });
 
       if (result?.error) {
-        console.error("Sign-in error:", result.error);
-        setError("Invalid email or password");
+        console.error('Sign-in error:', result.error);
+        setError('Invalid email or password');
         setIsLoading(false);
         return;
       }
 
       // Redirect to home page on successful login
-      router.replace("/");
+      router.replace('/');
       router.refresh();
     } catch (error) {
-      setError("An error occurred. Please try again.");
+      setError('An error occurred. Please try again.');
       setIsLoading(false);
     }
   };
@@ -74,7 +74,7 @@ export default function SignIn() {
                   autoComplete="email"
                   required
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={e => setEmail(e.target.value)}
                   className="appearance-none block w-full px-3 py-2 border border-gray-300 
                              dark:border-gray-700 dark:bg-gray-700 dark:text-white
                              rounded-md shadow-sm placeholder-gray-400 
@@ -98,7 +98,7 @@ export default function SignIn() {
                   autoComplete="current-password"
                   required
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={e => setPassword(e.target.value)}
                   className="appearance-none block w-full px-3 py-2 border border-gray-300 
                              dark:border-gray-700 dark:bg-gray-700 dark:text-white
                              rounded-md shadow-sm placeholder-gray-400 
@@ -117,14 +117,14 @@ export default function SignIn() {
                          focus:ring-offset-2 focus:ring-indigo-500 
                          disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {isLoading ? "Signing in..." : "Sign in"}
+                {isLoading ? 'Signing in...' : 'Sign in'}
               </button>
             </div>
           </form>
 
           <div className="mt-6">
             <p className="text-center text-sm text-gray-600 dark:text-gray-400">
-              Don&apos;t have an account?{" "}
+              Don&apos;t have an account?{' '}
               <Link
                 href="/auth/signup"
                 className="font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400"

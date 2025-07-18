@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import { signOut, useSession } from "next-auth/react";
-import Link from "next/link";
-import ThemeToggle from "./ThemeToggle";
+import { signOut, useSession } from 'next-auth/react';
+import Link from 'next/link';
+import ThemeToggle from './ThemeToggle';
 
 export default function Header() {
   const { data: session, status } = useSession();
-  const isLoading = status === "loading";
+  const isLoading = status === 'loading';
 
   return (
     <div className="bg-white dark:bg-gray-800 shadow-sm">
@@ -28,9 +28,7 @@ export default function Header() {
               />
             </svg>
             <Link href="/">
-              <h1 className="ml-2 text-xl font-bold text-gray-900 dark:text-white">
-                TaskMaster
-              </h1>
+              <h1 className="ml-2 text-xl font-bold text-gray-900 dark:text-white">TaskMaster</h1>
             </Link>
           </div>
 
@@ -41,11 +39,9 @@ export default function Header() {
               <div className="h-8 w-20 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
             ) : session ? (
               <div className="flex items-center space-x-4">
-                <div className="text-sm text-gray-700 dark:text-gray-300">
-                  {session.user?.name}
-                </div>
+                <div className="text-sm text-gray-700 dark:text-gray-300">{session.user?.name}</div>
                 <button
-                  onClick={() => signOut({ callbackUrl: "/" })}
+                  onClick={() => signOut({ callbackUrl: '/' })}
                   className="text-sm font-medium text-indigo-600 dark:text-indigo-400 hover:underline"
                 >
                   Sign out

@@ -1,28 +1,28 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { signIn } from "next-auth/react";
-import Link from "next/link";
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { signIn } from 'next-auth/react';
+import Link from 'next/link';
 
 export default function SignUp() {
   const router = useRouter();
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    setError("");
+    setError('');
 
     try {
-      const response = await fetch("/api/auth/register", {
-        method: "POST",
+      const response = await fetch('/api/auth/register', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({ name, email, password }),
       });
@@ -30,27 +30,27 @@ export default function SignUp() {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || "Registration failed");
+        throw new Error(data.error || 'Registration failed');
       }
 
       // Automatically sign in the user after successful registration
-      const signInResult = await signIn("credentials", {
+      const signInResult = await signIn('credentials', {
         redirect: false,
         email,
         password,
       });
 
       if (signInResult?.error) {
-        console.error("Auto sign-in failed:", signInResult.error);
+        console.error('Auto sign-in failed:', signInResult.error);
         // If auto sign-in fails, just redirect to sign in page
-        router.replace("/auth/signin?registered=true");
+        router.replace('/auth/signin?registered=true');
       } else {
         // Redirect to home page on successful auto sign-in
-        router.replace("/");
+        router.replace('/');
         router.refresh();
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Registration failed");
+      setError(err instanceof Error ? err.message : 'Registration failed');
     } finally {
       setIsLoading(false);
     }
@@ -88,7 +88,7 @@ export default function SignUp() {
                   autoComplete="name"
                   required
                   value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  onChange={e => setName(e.target.value)}
                   className="appearance-none block w-full px-3 py-2 border border-gray-300 
                              dark:border-gray-700 dark:bg-gray-700 dark:text-white
                              rounded-md shadow-sm placeholder-gray-400 
@@ -112,7 +112,7 @@ export default function SignUp() {
                   autoComplete="email"
                   required
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={e => setEmail(e.target.value)}
                   className="appearance-none block w-full px-3 py-2 border border-gray-300 
                              dark:border-gray-700 dark:bg-gray-700 dark:text-white
                              rounded-md shadow-sm placeholder-gray-400 
@@ -136,7 +136,7 @@ export default function SignUp() {
                   autoComplete="new-password"
                   required
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={e => setPassword(e.target.value)}
                   className="appearance-none block w-full px-3 py-2 border border-gray-300 
                              dark:border-gray-700 dark:bg-gray-700 dark:text-white
                              rounded-md shadow-sm placeholder-gray-400 
@@ -155,14 +155,14 @@ export default function SignUp() {
                          focus:ring-offset-2 focus:ring-indigo-500 
                          disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {isLoading ? "Creating account..." : "Sign up"}
+                {isLoading ? 'Creating account...' : 'Sign up'}
               </button>
             </div>
           </form>
 
           <div className="mt-6">
             <p className="text-center text-sm text-gray-600 dark:text-gray-400">
-              Already have an account?{" "}
+              Already have an account?{' '}
               <Link
                 href="/auth/signin"
                 className="font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400"

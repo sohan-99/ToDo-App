@@ -1,0 +1,23 @@
+# Build output
+.next/
+build/
+dist/
+out/
+
+# Dependencies
+node_modules/
+
+# Generated files
+coverage/
+.vercel
+.env*.local
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Misc
+.DS_Store
+*.pem

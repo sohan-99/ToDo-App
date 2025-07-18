@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { useGetTodosQuery } from "./api";
+import { useGetTodosQuery } from './api';
 
 export default function TodoStats() {
   const { data } = useGetTodosQuery();
@@ -8,10 +8,9 @@ export default function TodoStats() {
   if (!data) return null;
 
   const totalTasks = data.length;
-  const completedTasks = data.filter((todo) => todo.completed).length;
+  const completedTasks = data.filter(todo => todo.completed).length;
   const pendingTasks = totalTasks - completedTasks;
-  const completionRate =
-    totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+  const completionRate = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-8 mb-8">
@@ -33,18 +32,14 @@ export default function TodoStats() {
           </svg>
         </div>
         <div>
-          <p className="text-sm text-gray-500 dark:text-gray-400">
-            Total Tasks
-          </p>
-          <p className="text-xl font-bold text-gray-900 dark:text-white">
-            {totalTasks}
-          </p>
+          <p className="text-sm text-gray-500 dark:text-gray-400">Total Tasks</p>
+          <p className="text-xl font-bold text-gray-900 dark:text-white">{totalTasks}</p>
         </div>
       </div>
 
       <div
         className="bg-white dark:bg-gray-800 rounded-xl shadow p-6 flex items-center animate-fade-in"
-        style={{ animationDelay: "0.1s" }}
+        style={{ animationDelay: '0.1s' }}
       >
         <div className="rounded-full bg-green-100 dark:bg-green-900 p-3 mr-4">
           <svg
@@ -54,25 +49,18 @@ export default function TodoStats() {
             viewBox="0 0 24 24"
             stroke="currentColor"
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M5 13l4 4L19 7"
-            />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
           </svg>
         </div>
         <div>
           <p className="text-sm text-gray-500 dark:text-gray-400">Completed</p>
-          <p className="text-xl font-bold text-gray-900 dark:text-white">
-            {completedTasks}
-          </p>
+          <p className="text-xl font-bold text-gray-900 dark:text-white">{completedTasks}</p>
         </div>
       </div>
 
       <div
         className="bg-white dark:bg-gray-800 rounded-xl shadow p-6 flex items-center animate-fade-in"
-        style={{ animationDelay: "0.2s" }}
+        style={{ animationDelay: '0.2s' }}
       >
         <div className="rounded-full bg-yellow-100 dark:bg-yellow-900 p-3 mr-4">
           <svg
@@ -92,19 +80,15 @@ export default function TodoStats() {
         </div>
         <div>
           <p className="text-sm text-gray-500 dark:text-gray-400">Pending</p>
-          <p className="text-xl font-bold text-gray-900 dark:text-white">
-            {pendingTasks}
-          </p>
+          <p className="text-xl font-bold text-gray-900 dark:text-white">{pendingTasks}</p>
         </div>
       </div>
 
       <div
         className="bg-white dark:bg-gray-800 rounded-xl shadow p-6 sm:col-span-3 animate-fade-in"
-        style={{ animationDelay: "0.3s" }}
+        style={{ animationDelay: '0.3s' }}
       >
-        <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">
-          Completion Rate
-        </p>
+        <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">Completion Rate</p>
         <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-4">
           <div
             className="bg-gradient-to-r from-green-400 to-green-600 h-4 rounded-full transition-all duration-500 ease-out"

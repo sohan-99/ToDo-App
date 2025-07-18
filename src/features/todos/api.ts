@@ -1,5 +1,5 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-import { ITodo } from '@/types/todo'
+import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { ITodo } from '@/types/todo';
 
 export const todosApi = createApi({
   reducerPath: 'todosApi',
@@ -8,13 +8,13 @@ export const todosApi = createApi({
     credentials: 'include', // Include cookies for authentication
   }),
   tagTypes: ['Todos'],
-  endpoints: (builder) => ({
+  endpoints: builder => ({
     getTodos: builder.query<ITodo[], void>({
       query: () => 'todos',
       providesTags: ['Todos'],
     }),
     addTodo: builder.mutation<ITodo, Partial<ITodo>>({
-      query: (todo) => ({
+      query: todo => ({
         url: 'todos',
         method: 'POST',
         body: todo,
@@ -22,14 +22,14 @@ export const todosApi = createApi({
       invalidatesTags: ['Todos'],
     }),
     deleteTodo: builder.mutation<void, string | number>({
-      query: (id) => ({
+      query: id => ({
         url: `todos/${id}`,
         method: 'DELETE',
       }),
       invalidatesTags: ['Todos'],
     }),
     updateTodo: builder.mutation<ITodo, ITodo>({
-      query: (todo) => ({
+      query: todo => ({
         url: `todos/${todo.id}`,
         method: 'PUT',
         body: {
@@ -40,11 +40,11 @@ export const todosApi = createApi({
       invalidatesTags: ['Todos'],
     }),
   }),
-})
+});
 
 export const {
   useGetTodosQuery,
   useAddTodoMutation,
   useDeleteTodoMutation,
   useUpdateTodoMutation,
-} = todosApi
+} = todosApi;

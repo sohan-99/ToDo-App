@@ -1,29 +1,29 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useEffect, useState } from 'react';
+import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 
 export default function AuthError() {
   const searchParams = useSearchParams();
   const [errorMessage, setErrorMessage] = useState<string>(
-    "An error occurred during authentication"
+    'An error occurred during authentication'
   );
 
   useEffect(() => {
-    const error = searchParams.get("error");
-    console.log("Auth error received:", error);
+    const error = searchParams.get('error');
+    console.log('Auth error received:', error);
 
-    if (error === "CredentialsSignin") {
-      setErrorMessage("Invalid email or password");
-    } else if (error === "OAuthAccountNotLinked") {
-      setErrorMessage("The email is already used with another sign-in method");
-    } else if (error === "EmailSignin") {
-      setErrorMessage("The email could not be sent");
-    } else if (error === "Configuration") {
-      setErrorMessage("There is a problem with the server configuration");
-    } else if (error === "AccessDenied") {
-      setErrorMessage("You do not have access to this resource");
+    if (error === 'CredentialsSignin') {
+      setErrorMessage('Invalid email or password');
+    } else if (error === 'OAuthAccountNotLinked') {
+      setErrorMessage('The email is already used with another sign-in method');
+    } else if (error === 'EmailSignin') {
+      setErrorMessage('The email could not be sent');
+    } else if (error === 'Configuration') {
+      setErrorMessage('There is a problem with the server configuration');
+    } else if (error === 'AccessDenied') {
+      setErrorMessage('You do not have access to this resource');
     } else if (error) {
       setErrorMessage(`Authentication error: ${error}`);
     }

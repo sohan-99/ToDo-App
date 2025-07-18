@@ -18,17 +18,17 @@ export const authConfig: NextAuthConfig = {
       async authorize(credentials) {
         try {
           if (!credentials?.email || !credentials?.password) {
-            console.error("Missing credentials");
+            console.error('Missing credentials');
             return null;
           }
 
           await connectToDatabase();
 
           const user = await UserModel.findOne({ email: credentials.email });
-          console.log("User found:", user ? "Yes" : "No");
+          // console.log("User found:", user ? "Yes" : "No");
 
           if (!user) {
-            console.error("User not found");
+            // console.error("User not found");
             return null;
           }
 
@@ -36,16 +36,17 @@ export const authConfig: NextAuthConfig = {
           const passwordString = String(user.get('password'));
 
           if (!passwordString) {
-            console.error("User has no password");
+            // console.error("User has no password");
             return null;
           }
 
-          const passwordInput = typeof credentials.password === 'string' ? credentials.password : '';
+          const passwordInput =
+            typeof credentials.password === 'string' ? credentials.password : '';
           const isValid = await verifyPassword(passwordInput, passwordString);
-          console.log("Password validation:", isValid ? "Valid" : "Invalid");
+          console.log('Password validation:', isValid ? 'Valid' : 'Invalid');
 
           if (!isValid) {
-            console.error("Invalid password");
+            console.error('Invalid password');
             return null;
           }
 
@@ -56,7 +57,7 @@ export const authConfig: NextAuthConfig = {
             image: user.image,
           };
         } catch (error) {
-          console.error("Auth error:", error);
+          console.error('Auth error:', error);
           return null;
         }
       },

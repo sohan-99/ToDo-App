@@ -1,35 +1,35 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { useSession } from "next-auth/react";
+import { useState } from 'react';
+import { useSession } from 'next-auth/react';
 import {
   useGetTodosQuery,
   useAddTodoMutation,
   useDeleteTodoMutation,
   useUpdateTodoMutation,
-} from "./api";
-import { useTodoInputStore } from "./store";
-import { ITodo } from "@/types/todo";
+} from './api';
+import { useTodoInputStore } from './store';
+import { ITodo } from '@/types/todo';
 
 export default function ToDoList() {
   const { status: authStatus } = useSession();
   const { data, isLoading } = useGetTodosQuery(undefined, {
     // Skip the query if user is not authenticated
-    skip: authStatus !== "authenticated",
+    skip: authStatus !== 'authenticated',
   });
-  const input = useTodoInputStore((s) => s.input);
-  const setInput = useTodoInputStore((s) => s.setInput);
-  const reset = useTodoInputStore((s) => s.reset);
+  const input = useTodoInputStore(s => s.input);
+  const setInput = useTodoInputStore(s => s.setInput);
+  const reset = useTodoInputStore(s => s.reset);
 
   const [addTodo] = useAddTodoMutation();
   const [deleteTodo] = useDeleteTodoMutation();
   const [updateTodo] = useUpdateTodoMutation();
 
   const [editMode, setEditMode] = useState<string | number | null>(null);
-  const [editInput, setEditInput] = useState("");
+  const [editInput, setEditInput] = useState('');
 
   const handleAddTodo = async () => {
-    if (!input.trim() || authStatus !== "authenticated") return;
+    if (!input.trim() || authStatus !== 'authenticated') return;
 
     await addTodo({
       title: input,
@@ -39,7 +39,7 @@ export default function ToDoList() {
   };
 
   const handleToggleComplete = async (todo: ITodo) => {
-    if (authStatus !== "authenticated") return;
+    if (authStatus !== 'authenticated') return;
 
     await updateTodo({
       ...todo,
@@ -48,7 +48,7 @@ export default function ToDoList() {
   };
 
   const handleDelete = async (id: string | number) => {
-    if (authStatus !== "authenticated") return;
+    if (authStatus !== 'authenticated') return;
 
     await deleteTodo(id);
   };
@@ -60,7 +60,7 @@ export default function ToDoList() {
 
   const cancelEdit = () => {
     setEditMode(null);
-    setEditInput("");
+    setEditInput('');
   };
 
   const saveEdit = async (todo: ITodo) => {
@@ -71,7 +71,7 @@ export default function ToDoList() {
       title: editInput,
     });
     setEditMode(null);
-    setEditInput("");
+    setEditInput('');
   };
 
   if (isLoading)
@@ -109,10 +109,10 @@ export default function ToDoList() {
           <input
             type="text"
             value={input}
-            onChange={(e) => setInput(e.target.value)}
+            onChange={e => setInput(e.target.value)}
             className="flex-grow border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-l-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-150"
             placeholder="What do you need to accomplish today?"
-            onKeyPress={(e) => e.key === "Enter" && handleAddTodo()}
+            onKeyPress={e => e.key === 'Enter' && handleAddTodo()}
           />
           <button
             onClick={handleAddTodo}
@@ -156,7 +156,7 @@ export default function ToDoList() {
           </div>
         ) : (
           <ul className="divide-y divide-gray-200 dark:divide-gray-700">
-            {data?.map((todo) => (
+            {data?.map(todo => (
               <li
                 key={todo.id}
                 className="py-4 transition duration-150 hover:bg-gray-50 dark:hover:bg-gray-750 rounded-lg px-2"
@@ -166,10 +166,10 @@ export default function ToDoList() {
                     <input
                       type="text"
                       value={editInput}
-                      onChange={(e) => setEditInput(e.target.value)}
+                      onChange={e => setEditInput(e.target.value)}
                       className="flex-grow border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg px-3 py-2 mr-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                       autoFocus
-                      onKeyPress={(e) => e.key === "Enter" && saveEdit(todo)}
+                      onKeyPress={e => e.key === 'Enter' && saveEdit(todo)}
                     />
                     <button
                       onClick={() => saveEdit(todo)}
@@ -236,8 +236,8 @@ export default function ToDoList() {
                       <span
                         className={`${
                           todo.completed
-                            ? "line-through text-gray-400 dark:text-gray-500"
-                            : "text-gray-800 dark:text-gray-100"
+                            ? 'line-through text-gray-400 dark:text-gray-500'
+                            : 'text-gray-800 dark:text-gray-100'
                         } transition-all duration-200`}
                       >
                         {todo.title}

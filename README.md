@@ -8,12 +8,11 @@ Zustand: For local UI state management
 JSON Server: Backend mock API running on port 4000
 TailwindCSS: For styling
 Code Structure & Workflow
+
 1. Data Structure
-The application uses a simple Todo type defined in todo.ts:
+   The application uses a simple Todo type defined in todo.ts:
 
-
-export interface ITodo {  id: number  title: string  completed: boolean}
-2. State Management
+export interface ITodo {  id: number  title: string  completed: boolean} 2. State Management
 The project uses a hybrid state management approach:
 
 RTK Query (Redux Toolkit)
@@ -29,8 +28,7 @@ Zustand Store
 In store.ts, a Zustand store manages the local UI state:
 
 Tracks the input value for creating new todos
-Provides methods to set and reset the input value
-3. Components
+Provides methods to set and reset the input value 3. Components
 The main component is ToDoList.tsx which:
 
 Uses the RTK Query hooks to fetch and manipulate todos
@@ -40,19 +38,16 @@ Add new todos
 Toggle todo completion status
 Edit todo titles
 Delete todos
-Handles edit mode UI state with React's useState
-4. Application Structure
+Handles edit mode UI state with React's useState 4. Application Structure
 page.tsx: The main page that renders the TodoList component
 layout.tsx: The root layout that wraps the application with the Redux Provider
-db.json: The mock database file used by JSON Server
-5. Data Flow
+db.json: The mock database file used by JSON Server 5. Data Flow
 The application starts by rendering the ToDoList component in page.tsx
 The component fetches todos from the JSON Server using RTK Query's useGetTodosQuery
 When a user adds, edits, or deletes a todo:
 The corresponding RTK Query mutation hook is called
 The mutation updates the server data via JSON Server
-RTK Query automatically refetches the data and updates the UI
-6. Development Workflow
+RTK Query automatically refetches the data and updates the UI 6. Development Workflow
 To run the application:
 
 Start the JSON Server: npm run json-server (runs on port 4000)

@@ -1,15 +1,15 @@
-"use client";
+'use client';
 
-import { useEffect } from "react";
-import Link from "next/link";
-import { useSession } from "next-auth/react";
+import { useEffect } from 'react';
+import Link from 'next/link';
+import { useSession } from 'next-auth/react';
 
 export default function AuthDebug() {
   const { data: session, status } = useSession();
 
   useEffect(() => {
-    console.log("Auth debug - Session status:", status);
-    console.log("Auth debug - Session data:", session);
+    console.log('Auth debug - Session status:', status);
+    console.log('Auth debug - Session data:', session);
   }, [session, status]);
 
   return (
@@ -27,10 +27,10 @@ export default function AuthDebug() {
               <strong>Status:</strong> {status}
             </p>
             <p className="mb-2 text-gray-700 dark:text-gray-300">
-              <strong>User:</strong> {session?.user?.name || "Not signed in"}
+              <strong>User:</strong> {session?.user?.name || 'Not signed in'}
             </p>
             <p className="mb-2 text-gray-700 dark:text-gray-300">
-              <strong>Email:</strong> {session?.user?.email || "N/A"}
+              <strong>Email:</strong> {session?.user?.email || 'N/A'}
             </p>
           </div>
 

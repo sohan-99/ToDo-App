@@ -1,7 +1,7 @@
-import ToDoList from "@/features/todos/ToDoList";
-import TodoStats from "@/features/todos/TodoStats";
-import Header from "@/components/Header";
-import { auth } from "@/app/api/auth/[...nextauth]/route";
+import ToDoList from '@/features/todos/ToDoList';
+import TodoStats from '@/features/todos/TodoStats';
+import Header from '@/components/Header';
+import { auth } from '@/app/api/auth/[...nextauth]/route';
 
 export default async function HomePage() {
   // Get the session server-side for initial render
@@ -33,8 +33,8 @@ export default async function HomePage() {
                 Sign in to manage your tasks
               </h3>
               <p className="text-gray-600 dark:text-gray-300 mb-6">
-                Create an account or sign in to start tracking your tasks and
-                boost your productivity.
+                Create an account or sign in to start tracking your tasks and boost your
+                productivity.
               </p>
             </div>
           </div>
