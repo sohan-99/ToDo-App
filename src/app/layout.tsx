@@ -1,19 +1,19 @@
-'use client'
+import "./globals.css";
+import type { Metadata } from "next";
+import { ReactNode } from "react";
+import { Providers } from "./providers";
 
-import './globals.css'
-import { ReactNode } from 'react'
-import { Provider } from 'react-redux'
-import { store } from '@/store'
-import { ThemeProvider } from 'next-themes'
+export const metadata: Metadata = {
+  title: "TaskMaster - Manage Your Tasks",
+  description: "A simple task management application",
+};
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body>
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <Provider store={store}>{children}</Provider>
-        </ThemeProvider>
+        <Providers>{children}</Providers>
       </body>
     </html>
-  )
+  );
 }

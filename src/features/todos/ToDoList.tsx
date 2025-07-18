@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useSession } from "next-auth/react";
 import {
   useGetTodosQuery,
   useAddTodoMutation,
@@ -11,7 +12,11 @@ import { useTodoInputStore } from "./store";
 import { ITodo } from "@/types/todo";
 
 export default function ToDoList() {
-  const { data, isLoading } = useGetTodosQuery();
+  const { status: authStatus } = useSession();
+  const { data, isLoading } = useGetTodosQuery(undefined, {
+    // Skip the query if user is not authenticated
+    skip: authStatus !== "authenticated",
+  });
   const input = useTodoInputStore((s) => s.input);
   const setInput = useTodoInputStore((s) => s.setInput);
   const reset = useTodoInputStore((s) => s.reset);
@@ -20,11 +25,11 @@ export default function ToDoList() {
   const [deleteTodo] = useDeleteTodoMutation();
   const [updateTodo] = useUpdateTodoMutation();
 
-  const [editMode, setEditMode] = useState<number | null>(null);
+  const [editMode, setEditMode] = useState<string | number | null>(null);
   const [editInput, setEditInput] = useState("");
 
   const handleAddTodo = async () => {
-    if (!input.trim()) return;
+    if (!input.trim() || authStatus !== "authenticated") return;
 
     await addTodo({
       title: input,
@@ -34,13 +39,17 @@ export default function ToDoList() {
   };
 
   const handleToggleComplete = async (todo: ITodo) => {
+    if (authStatus !== "authenticated") return;
+
     await updateTodo({
       ...todo,
       completed: !todo.completed,
     });
   };
 
-  const handleDelete = async (id: number) => {
+  const handleDelete = async (id: string | number) => {
+    if (authStatus !== "authenticated") return;
+
     await deleteTodo(id);
   };
 

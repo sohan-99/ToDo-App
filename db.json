@@ -18,26 +18,31 @@
     {
       "id": "4",
       "title": "Create TodoList component",
-      "completed": false
+      "completed": true
     },
     {
       "id": "5",
       "title": "Connect Zustand store",
-      "completed": false
+      "completed": true
     },
     {
       "id": "9",
       "title": "Delete Todo item",
-      "completed": false
+      "completed": true
     },
     {
       "id": "10",
       "title": "Style with Tailwind CSS",
+      "completed": true
+    },
+    {
+      "id": "3abe",
+      "title": "hhhh",
       "completed": false
     },
     {
-      "id": "e174",
-      "title": "Going to market in 6 pm.",
+      "id": "c24f",
+      "title": "etryuiohjpk",
       "completed": false
     }
   ]

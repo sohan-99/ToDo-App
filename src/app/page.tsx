@@ -1,36 +1,15 @@
 import ToDoList from "@/features/todos/ToDoList";
 import TodoStats from "@/features/todos/TodoStats";
-import ThemeToggle from "@/components/ThemeToggle";
+import Header from "@/components/Header";
+import { auth } from "@/app/api/auth/[...nextauth]/route";
 
-export default function HomePage() {
+export default async function HomePage() {
+  // Get the session server-side for initial render
+  const session = await auth();
+
   return (
     <main className="min-h-screen bg-gray-50 dark:bg-gray-900 dark:text-white transition-colors duration-200">
-      <div className="bg-white dark:bg-gray-800 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-4">
-            <div className="flex items-center">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-8 w-8 text-indigo-600"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
-                />
-              </svg>
-              <h1 className="ml-2 text-xl font-bold text-gray-900 dark:text-white">
-                TaskMaster
-              </h1>
-            </div>
-            <ThemeToggle />
-          </div>
-        </div>
-      </div>
+      <Header />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <div className="text-center mb-10">
@@ -42,9 +21,24 @@ export default function HomePage() {
           </p>
         </div>
 
-        <TodoStats />
-
-        <ToDoList />
+        {session ? (
+          <>
+            <TodoStats />
+            <ToDoList />
+          </>
+        ) : (
+          <div className="text-center py-10">
+            <div className="bg-white dark:bg-gray-800 shadow-md rounded-lg p-6 max-w-md mx-auto">
+              <h3 className="text-xl font-medium text-gray-900 dark:text-white mb-4">
+                Sign in to manage your tasks
+              </h3>
+              <p className="text-gray-600 dark:text-gray-300 mb-6">
+                Create an account or sign in to start tracking your tasks and
+                boost your productivity.
+              </p>
+            </div>
+          </div>
+        )}
 
         <footer className="mt-16 text-center">
           <p className="text-sm text-gray-500 dark:text-gray-400">

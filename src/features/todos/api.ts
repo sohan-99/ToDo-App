@@ -3,7 +3,10 @@ import { ITodo } from '@/types/todo'
 
 export const todosApi = createApi({
   reducerPath: 'todosApi',
-  baseQuery: fetchBaseQuery({ baseUrl: 'http://localhost:4000/' }),
+  baseQuery: fetchBaseQuery({
+    baseUrl: '/api/',
+    credentials: 'include', // Include cookies for authentication
+  }),
   tagTypes: ['Todos'],
   endpoints: (builder) => ({
     getTodos: builder.query<ITodo[], void>({
@@ -18,7 +21,7 @@ export const todosApi = createApi({
       }),
       invalidatesTags: ['Todos'],
     }),
-    deleteTodo: builder.mutation<void, number>({
+    deleteTodo: builder.mutation<void, string | number>({
       query: (id) => ({
         url: `todos/${id}`,
         method: 'DELETE',
@@ -29,7 +32,10 @@ export const todosApi = createApi({
       query: (todo) => ({
         url: `todos/${todo.id}`,
         method: 'PUT',
-        body: todo,
+        body: {
+          title: todo.title,
+          completed: todo.completed,
+        },
       }),
       invalidatesTags: ['Todos'],
     }),
