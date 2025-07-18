@@ -1,9 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { signIn } from 'next-auth/react';
 import Link from 'next/link';
+import GoogleAuthButton from '@/components/GoogleAuthButton';
 
 export default function SignUp() {
   const router = useRouter();
@@ -159,6 +160,21 @@ export default function SignUp() {
               </button>
             </div>
           </form>
+
+          <div className="mt-6 relative">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-gray-300 dark:border-gray-700"></div>
+            </div>
+            <div className="relative flex justify-center text-sm">
+              <span className="px-2 bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400">
+                Or sign up with
+              </span>
+            </div>
+          </div>
+
+          <div className="mt-6">
+            <GoogleAuthButton />
+          </div>
 
           <div className="mt-6">
             <p className="text-center text-sm text-gray-600 dark:text-gray-400">

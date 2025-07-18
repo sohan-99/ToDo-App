@@ -24,7 +24,7 @@ const UserSchema = new mongoose.Schema<IUser>(
     },
     password: {
       type: String,
-      required: [true, 'Please provide a password'],
+      required: false, // Optional for OAuth users
     },
     image: {
       type: String,

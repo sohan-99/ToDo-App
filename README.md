@@ -58,3 +58,27 @@ Local UI State: Uses Zustand for simple local state management
 CRUD Operations: Full create, read, update, delete functionality
 Responsive UI: Clean UI with TailwindCSS styling
 Edit Mode: Inline editing of todo items
+Authentication: NextAuth.js with Google OAuth and credential sign-in options
+
+## Setting Up Google OAuth
+
+To set up Google authentication:
+
+1. Go to the [Google Cloud Console](https://console.cloud.google.com/)
+2. Create a new project or select an existing one
+3. Navigate to "APIs & Services" > "Credentials"
+4. Click "Create Credentials" and select "OAuth client ID"
+5. Set the application type to "Web application"
+6. Add your authorized origins (e.g., `http://localhost:3000`)
+7. Add your authorized redirect URIs (e.g., `http://localhost:3000/api/auth/callback/google`)
+8. Click "Create" and note your Client ID and Client Secret
+9. Copy `.env.local.example` to `.env.local` and add your Google credentials:
+
+```
+GOOGLE_CLIENT_ID=your_client_id_here
+GOOGLE_CLIENT_SECRET=your_client_secret_here
+NEXTAUTH_SECRET=generate_a_secure_random_string
+NEXTAUTH_URL=http://localhost:3000
+```
+
+For production, make sure to update the authorized origins and redirect URIs to your production domain.
