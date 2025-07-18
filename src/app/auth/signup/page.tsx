@@ -34,7 +34,7 @@ export default function SignUp() {
         throw new Error(data.error || 'Registration failed');
       }
 
-      // Automatically sign in the user after successful registration
+     
       const signInResult = await signIn('credentials', {
         redirect: false,
         email,
@@ -42,8 +42,8 @@ export default function SignUp() {
       });
 
       if (signInResult?.error) {
-        console.error('Auto sign-in failed:', signInResult.error);
-        // If auto sign-in fails, just redirect to sign in page
+        // console.error('Auto sign-in failed:', signInResult.error);
+      
         router.replace('/auth/signin?registered=true');
       } else {
         // Redirect to home page on successful auto sign-in
