@@ -40,6 +40,7 @@ export const authConfig: NextAuthConfig = {
             email: user.email,
             name: user.name,
             image: user.image,
+            role: user.role || 'user',
           };
         } catch {
           return null;
@@ -52,14 +53,20 @@ export const authConfig: NextAuthConfig = {
     }),
   ],
   callbacks: {
-    // Add user ID to token
+    // Add user ID and role to token
     async jwt({ token, user }) {
-      if (user) token.id = user.id;
+      if (user) {
+        token.id = user.id;
+        token.role = user.role || 'user';
+      }
       return token;
     },
-    // Add token ID to session user
+    // Add token ID and role to session user
     async session({ session, token }) {
-      if (token && session.user) session.user.id = token.id as string;
+      if (token && session.user) {
+        session.user.id = token.id as string;
+        session.user.role = token.role as 'user' | 'admin';
+      }
       return session;
     },
     async signIn({ user, account }) {
@@ -76,14 +83,16 @@ export const authConfig: NextAuthConfig = {
             $setOnInsert: {
               name: user.name,
               email: user.email,
-              image: user.image
+              image: user.image,
+              role: 'user'  // Default role for new users
             }
           },
           { upsert: true, new: true }
         );
 
-        // Update user ID to match our MongoDB ID
+        // Update user ID and role to match our MongoDB user
         user.id = dbUser._id.toString();
+        user.role = dbUser.role;
       } catch {
         // Silently handle errors and proceed with sign-in
       }
@@ -115,3 +124,4 @@ export const authConfig: NextAuthConfig = {
 };
 
 export const { handlers, auth, signIn, signOut } = NextAuth(authConfig);
+export const { GET, POST } = handlers;

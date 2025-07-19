@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { NextRequest, NextResponse } from 'next/server';
 import { connectToDatabase } from '@/lib/mongodb';
 import TodoModel from '@/models/Todo';
@@ -47,7 +49,7 @@ export async function GET(req: NextRequest, { params }: Params) {
 
     return NextResponse.json(transformedTodo, { status: 200 });
   } catch (error) {
-    console.error('Error fetching todo:', error);
+    // console.error('Error fetching todo:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
@@ -94,7 +96,7 @@ export async function PUT(req: NextRequest, { params }: Params) {
 
     return NextResponse.json(transformedTodo, { status: 200 });
   } catch (error) {
-    console.error('Error updating todo:', error);
+    // console.error('Error updating todo:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
@@ -129,7 +131,7 @@ export async function DELETE(req: NextRequest, { params }: Params) {
 
     return NextResponse.json({ message: 'Todo deleted successfully' }, { status: 200 });
   } catch (error) {
-    console.error('Error deleting todo:', error);
+    // console.error('Error deleting todo:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

@@ -39,7 +39,17 @@ export default function Header() {
               <div className="h-8 w-20 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
             ) : session ? (
               <div className="flex items-center space-x-4">
-                <div className="text-sm text-gray-700 dark:text-gray-300">{session.user?.name}</div>
+                <Link
+                  href="/dashboard"
+                  className="text-sm text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400"
+                >
+                  {session.user?.name}
+                  {session.user?.role === 'admin' && (
+                    <span className="ml-2 px-1.5 py-0.5 text-xs font-medium rounded bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300">
+                      Admin
+                    </span>
+                  )}
+                </Link>
                 <button
                   onClick={() => signOut({ callbackUrl: '/' })}
                   className="text-sm font-medium text-indigo-600 dark:text-indigo-400 hover:underline"

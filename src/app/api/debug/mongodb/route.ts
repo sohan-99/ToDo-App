@@ -16,7 +16,7 @@ export async function GET() {
       { status: 200 }
     );
   } catch (error) {
-    console.error('MongoDB connection error:', error);
+    // console.error('MongoDB connection error:', error);
 
     return NextResponse.json(
       {
