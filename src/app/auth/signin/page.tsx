@@ -1,18 +1,26 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { signIn } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import GoogleAuthButton from '@/components/GoogleAuthButton';
 
 export default function SignIn() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    // Check if user was redirected after successful registration
+    if (searchParams.get('registered') === 'true') {
+      setSuccess('Account created successfully! Please sign in with your new credentials.');
+    }
+  }, [searchParams]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,7 +36,6 @@ export default function SignIn() {
       });
 
       if (result?.error) {
-        console.error('Sign-in error:', result.error);
         setError('Invalid email or password');
         setIsLoading(false);
         return;
@@ -37,7 +44,7 @@ export default function SignIn() {
       // Redirect to home page on successful login
       router.replace('/');
       router.refresh();
-    } catch (error) {
+    } catch {
       setError('An error occurred. Please try again.');
       setIsLoading(false);
     }
@@ -54,6 +61,11 @@ export default function SignIn() {
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white dark:bg-gray-800 py-8 px-4 shadow sm:rounded-lg sm:px-10">
           <form className="space-y-6" onSubmit={handleSubmit}>
+            {success && (
+              <div className="bg-green-50 dark:bg-green-900/30 border-l-4 border-green-500 p-4">
+                <p className="text-green-700 dark:text-green-400">{success}</p>
+              </div>
+            )}
             {error && (
               <div className="bg-red-50 dark:bg-red-900/30 border-l-4 border-red-500 p-4">
                 <p className="text-red-700 dark:text-red-400">{error}</p>

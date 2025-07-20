@@ -6,7 +6,7 @@ import { signIn } from 'next-auth/react';
 import Link from 'next/link';
 import GoogleAuthButton from '@/components/GoogleAuthButton';
 
-export default function SignUp() {
+export default function SignupPage() {
   const router = useRouter();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -20,6 +20,11 @@ export default function SignUp() {
     setError('');
 
     try {
+      // Validate password length before sending request
+      if (password.length < 8) {
+        throw new Error('Password must be at least 8 characters long');
+      }
+
       const response = await fetch('/api/auth/register', {
         method: 'POST',
         headers: {
@@ -34,7 +39,7 @@ export default function SignUp() {
         throw new Error(data.error || 'Registration failed');
       }
 
-     
+      // On successful registration, attempt to sign in
       const signInResult = await signIn('credentials', {
         redirect: false,
         email,
@@ -42,8 +47,7 @@ export default function SignUp() {
       });
 
       if (signInResult?.error) {
-        // console.error('Auto sign-in failed:', signInResult.error);
-      
+        // If auto sign-in fails, redirect to sign-in page with a success message
         router.replace('/auth/signin?registered=true');
       } else {
         // Redirect to home page on successful auto sign-in

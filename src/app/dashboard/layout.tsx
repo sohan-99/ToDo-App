@@ -1,6 +1,6 @@
-/* eslint-disable no-undef */
 'use client';
 
+import React from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
@@ -47,7 +47,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                   My Tasks
                 </a>
               </li>
-              {session?.user.role === 'admin' && (
+              {(session?.user.role === 'admin' || session?.user.role === 'super-admin') && (
                 <>
                   <li className="pt-4 border-t border-gray-300 dark:border-gray-700">
                     <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">
@@ -59,7 +59,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                       href="/dashboard/admin/users"
                       className="block p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300"
                     >
-                      Manage Users
+                      {session?.user.role === 'super-admin' ? 'All Users' : 'Manage Users'}
                     </a>
                   </li>
                   <li>

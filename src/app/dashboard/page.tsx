@@ -1,7 +1,7 @@
 'use client';
 
 import { useSession } from 'next-auth/react';
-import { UserRole } from '@/models/User';
+import { UserRole } from '@/models/user.interface';
 
 export default function DashboardPage() {
   const { data: session } = useSession();
@@ -21,12 +21,46 @@ export default function DashboardPage() {
           <span className="font-medium">Role:</span>
           <span
             className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-              userRole === 'admin' ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800'
+              userRole === 'super-admin'
+                ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300'
+                : userRole === 'admin'
+                  ? 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300'
+                  : 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300'
             }`}
           >
-            {userRole === 'admin' ? 'Administrator' : 'User'}
+            {userRole === 'super-admin'
+              ? 'Super Administrator'
+              : userRole === 'admin'
+                ? 'Administrator'
+                : 'User'}
           </span>
         </div>
+
+        {(userRole === 'admin' || userRole === 'super-admin') && (
+          <div className="mt-4 p-3 border border-gray-200 dark:border-gray-600 rounded-lg">
+            <h3 className="font-medium mb-2">Your Admin Permissions:</h3>
+            <ul className="list-disc list-inside space-y-1 text-sm">
+              <li className="text-green-600 dark:text-green-400">✓ View all users</li>
+              <li className="text-green-600 dark:text-green-400">✓ Delete regular users</li>
+              <li className="text-green-600 dark:text-green-400">✓ Update user information</li>
+              {userRole === 'super-admin' ? (
+                <>
+                  <li className="text-green-600 dark:text-green-400">
+                    ✓ Promote users to Admin/Super Admin
+                  </li>
+                  <li className="text-green-600 dark:text-green-400">✓ Delete Admin users</li>
+                </>
+              ) : (
+                <>
+                  <li className="text-red-600 dark:text-red-400">✗ Cannot promote users</li>
+                  <li className="text-red-600 dark:text-red-400">
+                    ✗ Cannot delete Admin/Super Admin users
+                  </li>
+                </>
+              )}
+            </ul>
+          </div>
+        )}
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -48,7 +82,7 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {userRole === 'admin' && (
+        {(userRole === 'admin' || userRole === 'super-admin') && (
           <div className="bg-white dark:bg-gray-700 shadow-md rounded-lg p-6">
             <h3 className="text-lg font-semibold mb-4">Admin Overview</h3>
             <div className="space-y-4">
@@ -64,6 +98,16 @@ export default function DashboardPage() {
                 <span>System Status</span>
                 <span className="text-green-500 font-semibold">Active</span>
               </div>
+              {userRole === 'super-admin' && (
+                <div className="mt-4">
+                  <a
+                    href="/dashboard/admin/users"
+                    className="text-blue-500 hover:text-blue-700 font-medium"
+                  >
+                    View All Users →
+                  </a>
+                </div>
+              )}
             </div>
           </div>
         )}

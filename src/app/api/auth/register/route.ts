@@ -31,6 +31,7 @@ export async function POST(req: NextRequest) {
       name,
       email,
       password: hashedPassword,
+      role: 'user', // Default role for new users
     });
 
     // Create a user object without password
