@@ -1,0 +1,13 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Restart Next.js Server",
+      "type": "shell",
+      "command": "cd /run/media/sohan-shell/Programming/Boomdeves/rtk-zustand-todo && npm run dev",
+      "problemMatcher": [],
+      "group": "none",
+      "isBackground": true
+    }
+  ]
+}

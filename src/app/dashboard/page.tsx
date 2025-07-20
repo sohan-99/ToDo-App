@@ -2,10 +2,13 @@
 
 import { useSession } from 'next-auth/react';
 import { UserRole } from '@/models/user.interface';
+import { useGetStatsQuery } from '@/features/todos/api';
+import LoadingSpinner from '@/components/LoadingSpinner';
 
 export default function DashboardPage() {
   const { data: session } = useSession();
   const userRole = session?.user?.role as UserRole;
+  const { data: stats, isLoading, error } = useGetStatsQuery();
 
   return (
     <div>
@@ -66,49 +69,115 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="bg-white dark:bg-gray-700 shadow-md rounded-lg p-6">
           <h3 className="text-lg font-semibold mb-4">Quick Summary</h3>
-          <div className="space-y-4">
-            <div className="flex justify-between">
-              <span>Active Tasks</span>
-              <span className="font-semibold">-</span>
+          {isLoading ? (
+            <div className="flex justify-center py-4">
+              <LoadingSpinner />
             </div>
-            <div className="flex justify-between">
-              <span>Completed Tasks</span>
-              <span className="font-semibold">-</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Pending Tasks</span>
-              <span className="font-semibold">-</span>
-            </div>
-          </div>
-        </div>
-
-        {(userRole === 'admin' || userRole === 'super-admin') && (
-          <div className="bg-white dark:bg-gray-700 shadow-md rounded-lg p-6">
-            <h3 className="text-lg font-semibold mb-4">Admin Overview</h3>
+          ) : error ? (
+            <div className="text-red-500 py-2">Failed to load stats</div>
+          ) : stats ? (
             <div className="space-y-4">
               <div className="flex justify-between">
-                <span>Total Users</span>
+                <span>Active Tasks</span>
+                <span className="font-semibold">{stats.userStats.active}</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Completed Tasks</span>
+                <span className="font-semibold">{stats.userStats.completed}</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Pending Tasks</span>
+                <span className="font-semibold">{stats.userStats.pending}</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Total Tasks</span>
+                <span className="font-semibold">{stats.userStats.total}</span>
+              </div>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              <div className="flex justify-between">
+                <span>Active Tasks</span>
+                <span className="font-semibold">-</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Completed Tasks</span>
+                <span className="font-semibold">-</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Pending Tasks</span>
                 <span className="font-semibold">-</span>
               </div>
               <div className="flex justify-between">
                 <span>Total Tasks</span>
                 <span className="font-semibold">-</span>
               </div>
-              <div className="flex justify-between">
-                <span>System Status</span>
-                <span className="text-green-500 font-semibold">Active</span>
-              </div>
-              {userRole === 'super-admin' && (
-                <div className="mt-4">
-                  <a
-                    href="/dashboard/admin/users"
-                    className="text-blue-500 hover:text-blue-700 font-medium"
-                  >
-                    View All Users →
-                  </a>
-                </div>
-              )}
             </div>
+          )}
+        </div>
+
+        {(userRole === 'admin' || userRole === 'super-admin') && (
+          <div className="bg-white dark:bg-gray-700 shadow-md rounded-lg p-6">
+            <h3 className="text-lg font-semibold mb-4">Admin Overview</h3>
+            {isLoading ? (
+              <div className="flex justify-center py-4">
+                <LoadingSpinner />
+              </div>
+            ) : error ? (
+              <div className="text-red-500 py-2">Failed to load stats</div>
+            ) : stats?.adminStats ? (
+              <div className="space-y-4">
+                <div className="flex justify-between">
+                  <span>Total Users</span>
+                  <span className="font-semibold">{stats.adminStats.totalUsers}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Total Tasks</span>
+                  <span className="font-semibold">{stats.adminStats.totalTasks}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>System Status</span>
+                  <span className="text-green-500 font-semibold">
+                    {stats.adminStats.systemStatus}
+                  </span>
+                </div>
+                {userRole === 'super-admin' && (
+                  <div className="mt-4">
+                    <a
+                      href="/dashboard/admin/users"
+                      className="text-blue-500 hover:text-blue-700 font-medium"
+                    >
+                      View All Users →
+                    </a>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="space-y-4">
+                <div className="flex justify-between">
+                  <span>Total Users</span>
+                  <span className="font-semibold">-</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Total Tasks</span>
+                  <span className="font-semibold">-</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>System Status</span>
+                  <span className="text-green-500 font-semibold">Active</span>
+                </div>
+                {userRole === 'super-admin' && (
+                  <div className="mt-4">
+                    <a
+                      href="/dashboard/admin/users"
+                      className="text-blue-500 hover:text-blue-700 font-medium"
+                    >
+                      View All Users →
+                    </a>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         )}
       </div>

@@ -1,7 +1,19 @@
 import mongoose from 'mongoose';
-import { IUser } from './user.interface';
+import { IUser, AdminPermissions } from './user.interface';
 
-
+const AdminPermissionsSchema = new mongoose.Schema<AdminPermissions>(
+  {
+    canUpdateUserInfo: {
+      type: Boolean,
+      default: true,
+    },
+    canDeleteUsers: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  { _id: false }
+);
 
 const UserSchema = new mongoose.Schema<IUser>(
   {
@@ -26,6 +38,13 @@ const UserSchema = new mongoose.Schema<IUser>(
       type: String,
       enum: ['user', 'admin', 'super-admin'],
       default: 'user',
+    },
+    adminPermissions: {
+      type: AdminPermissionsSchema,
+      default: () => ({
+        canUpdateUserInfo: true,
+        canDeleteUsers: false,
+      }),
     },
   },
   {

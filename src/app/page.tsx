@@ -1,6 +1,5 @@
 import ToDoList from '@/features/todos/ToDoList';
 import TodoStats from '@/features/todos/TodoStats';
-import Header from '@/components/Header';
 import { auth } from '@/app/api/auth/[...nextauth]/route';
 
 export default async function HomePage() {
@@ -9,8 +8,6 @@ export default async function HomePage() {
 
   return (
     <main className="min-h-screen bg-gray-50 dark:bg-gray-900 dark:text-white transition-colors duration-200">
-      <Header />
-
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <div className="text-center mb-10">
           <h2 className="text-3xl font-extrabold tracking-tight text-gray-900 dark:text-white sm:text-4xl">

@@ -4,7 +4,6 @@ import React from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
-import Header from '@/components/Header';
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   const { status } = useSession();
@@ -19,7 +18,6 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
       <main className="flex-grow">{children}</main>
     </div>
   );

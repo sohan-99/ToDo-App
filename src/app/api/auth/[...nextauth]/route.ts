@@ -31,7 +31,8 @@ export const authConfig: NextAuthConfig = {
           const passwordString = String(user.get('password'));
           if (!passwordString) return null;
 
-          const passwordInput = typeof credentials.password === 'string' ? credentials.password : '';
+          const passwordInput =
+            typeof credentials.password === 'string' ? credentials.password : '';
           const isValid = await verifyPassword(passwordInput, passwordString);
           if (!isValid) return null;
 
@@ -41,6 +42,7 @@ export const authConfig: NextAuthConfig = {
             name: user.name,
             image: user.image,
             role: user.role || 'user',
+            adminPermissions: user.adminPermissions,
           };
         } catch {
           return null;
@@ -58,6 +60,9 @@ export const authConfig: NextAuthConfig = {
       if (user) {
         token.id = user.id;
         token.role = user.role || 'user';
+        if (user.role === 'admin' && user.adminPermissions) {
+          token.adminPermissions = user.adminPermissions;
+        }
       }
       return token;
     },
@@ -65,7 +70,13 @@ export const authConfig: NextAuthConfig = {
     async session({ session, token }) {
       if (token && session.user) {
         session.user.id = token.id as string;
-        session.user.role = token.role as 'user' | 'admin';
+        session.user.role = token.role as 'user' | 'admin' | 'super-admin';
+        if (token.adminPermissions) {
+          session.user.adminPermissions = token.adminPermissions as {
+            canUpdateUserInfo: boolean;
+            canDeleteUsers: boolean;
+          };
+        }
       }
       return session;
     },
@@ -84,8 +95,8 @@ export const authConfig: NextAuthConfig = {
               name: user.name,
               email: user.email,
               image: user.image,
-              role: 'user'  // Default role for new users
-            }
+              role: 'user', // Default role for new users
+            },
           },
           { upsert: true, new: true }
         );

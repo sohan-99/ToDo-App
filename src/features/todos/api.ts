@@ -1,6 +1,25 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { ITodo } from '@/types/todo';
 
+// Define stats types
+export interface UserStats {
+  total: number;
+  active: number;
+  completed: number;
+  pending: number;
+}
+
+export interface AdminStats {
+  totalUsers: number;
+  totalTasks: number;
+  systemStatus: string;
+}
+
+export interface DashboardStats {
+  userStats: UserStats;
+  adminStats: AdminStats | null;
+}
+
 export const todosApi = createApi({
   reducerPath: 'todosApi',
   baseQuery: fetchBaseQuery({
@@ -9,6 +28,10 @@ export const todosApi = createApi({
   }),
   tagTypes: ['Todos'],
   endpoints: builder => ({
+    getStats: builder.query<DashboardStats, void>({
+      query: () => 'stats',
+      providesTags: ['Todos'],
+    }),
     getTodos: builder.query<ITodo[], void>({
       query: () => 'todos',
       providesTags: ['Todos'],
@@ -43,6 +66,7 @@ export const todosApi = createApi({
 });
 
 export const {
+  useGetStatsQuery,
   useGetTodosQuery,
   useAddTodoMutation,
   useDeleteTodoMutation,

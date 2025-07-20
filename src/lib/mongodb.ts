@@ -8,8 +8,8 @@ const MONGODB_CONFIG = {
   options: {
     bufferCommands: false,
     connectTimeoutMS: 10000, // 10 seconds
-    socketTimeoutMS: 45000,  // 45 seconds
-  }
+    socketTimeoutMS: 45000, // 45 seconds
+  },
 };
 
 /**
@@ -60,6 +60,8 @@ export async function connectToDatabase(): Promise<mongoose.Connection> {
     return global.mongoose.conn;
   } catch (error) {
     // Let the error propagate to be handled by the API route
-    throw new Error(`MongoDB connection failed: ${error instanceof Error ? error.message : String(error)}`);
+    throw new Error(
+      `MongoDB connection failed: ${error instanceof Error ? error.message : String(error)}`
+    );
   }
 }
