@@ -11,6 +11,14 @@ const AdminPermissionsSchema = new mongoose.Schema<AdminPermissions>(
       type: Boolean,
       default: false,
     },
+    canPromoteToAdmin: {
+      type: Boolean,
+      default: false,
+    },
+    canDemoteAdmins: {
+      type: Boolean,
+      default: false,
+    },
   },
   { _id: false }
 );
@@ -44,6 +52,8 @@ const UserSchema = new mongoose.Schema<IUser>(
       default: () => ({
         canUpdateUserInfo: true,
         canDeleteUsers: false,
+        canPromoteToAdmin: false,
+        canDemoteAdmins: false,
       }),
     },
   },

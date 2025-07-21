@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, FormEvent } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import LoadingSpinner from '@/components/LoadingSpinner';
-import { UserRole } from '@/models/user.interface';
+import { UserRole, AdminPermissions } from '@/models/user.interface';
 
 interface User {
   _id: string;
@@ -13,10 +13,7 @@ interface User {
   email: string;
   role: UserRole;
   createdAt: string;
-  adminPermissions?: {
-    canUpdateUserInfo: boolean;
-    canDeleteUsers: boolean;
-  };
+  adminPermissions?: AdminPermissions;
 }
 
 export default function AdminUsersPage() {
@@ -33,6 +30,20 @@ export default function AdminUsersPage() {
     email: string;
   } | null>(null);
   const [updateLoading, setUpdateLoading] = useState(false);
+  const [showCreateForm, setShowCreateForm] = useState(false);
+  const [createUserData, setCreateUserData] = useState({
+    name: '',
+    email: '',
+    password: '',
+    role: 'user' as UserRole,
+    adminPermissions: {
+      canUpdateUserInfo: true,
+      canDeleteUsers: false,
+      canPromoteToAdmin: false,
+      canDemoteAdmins: false,
+    },
+  });
+  const [createLoading, setCreateLoading] = useState(false);
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -83,6 +94,8 @@ export default function AdminUsersPage() {
               adminPermissions: {
                 canUpdateUserInfo: true, // Default: can update user info
                 canDeleteUsers: false, // Default: cannot delete users
+                canPromoteToAdmin: false, // Default: cannot promote users to admin
+                canDemoteAdmins: false, // Default: cannot demote admins
               },
             }
           : {}),
@@ -114,6 +127,8 @@ export default function AdminUsersPage() {
                     adminPermissions: {
                       canUpdateUserInfo: true, // Default: can update user info
                       canDeleteUsers: false, // Default: cannot delete users
+                      canPromoteToAdmin: false, // Default: cannot promote to admin
+                      canDemoteAdmins: false, // Default: cannot demote admins
                     },
                   }
                 : {}),
@@ -195,6 +210,65 @@ export default function AdminUsersPage() {
     }
   };
 
+  // Handle creating a new user
+  const handleCreateUser = async (e: FormEvent) => {
+    e.preventDefault();
+    setCreateLoading(true);
+
+    try {
+      const response = await fetch('/api/admin/users', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          user: createUserData,
+        }),
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || 'Failed to create user');
+      }
+
+      const { user, message } = await response.json();
+
+      // Check if the user was updated or created
+      const isUpdated = message === 'User updated successfully';
+
+      if (isUpdated) {
+        // Update the existing user in the list
+        setUsers(prevUsers => prevUsers.map(u => (u._id === user._id ? user : u)));
+        setError('Existing user updated successfully');
+      } else {
+        // Add new user to the list
+        setUsers(prevUsers => [user, ...prevUsers]);
+        setError('User created successfully');
+      }
+
+      setTimeout(() => setError(null), 3000);
+
+      // Reset form
+      setCreateUserData({
+        name: '',
+        email: '',
+        password: '',
+        role: 'user' as UserRole,
+        adminPermissions: {
+          canUpdateUserInfo: true,
+          canDeleteUsers: false,
+          canPromoteToAdmin: false,
+          canDemoteAdmins: false,
+        },
+      });
+      setShowCreateForm(false);
+    } catch (err: any) {
+      setError(err.message || 'An error occurred while creating the user');
+    } finally {
+      setCreateLoading(false);
+    }
+  };
+
   const handleBulkDelete = async () => {
     if (selectedUsers.length === 0) {
       setError('No users selected');
@@ -261,16 +335,218 @@ export default function AdminUsersPage() {
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Manage Users</h1>
 
-        {selectedUsers.length > 0 && (
+        <div className="flex space-x-2">
+          {selectedUsers.length > 0 && (
+            <button
+              onClick={handleBulkDelete}
+              disabled={deleteLoading}
+              className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {deleteLoading ? 'Deleting...' : `Delete Selected (${selectedUsers.length})`}
+            </button>
+          )}
+
           <button
-            onClick={handleBulkDelete}
-            disabled={deleteLoading}
-            className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50 disabled:cursor-not-allowed"
+            onClick={() => setShowCreateForm(!showCreateForm)}
+            className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
           >
-            {deleteLoading ? 'Deleting...' : `Delete Selected (${selectedUsers.length})`}
+            {showCreateForm ? 'Cancel' : 'Create/Update User'}
           </button>
-        )}
+        </div>
       </div>
+
+      {/* Create User Form */}
+      {showCreateForm && (
+        <div className="bg-white dark:bg-gray-700 p-4 rounded-md shadow-md mb-6">
+          <h2 className="text-lg font-semibold mb-4">Create or Update User</h2>
+          <p className="text-sm text-gray-500 mb-4">
+            If the email already exists, the user will be updated instead of creating a new one.
+          </p>
+          <form onSubmit={handleCreateUser} className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label
+                  htmlFor="name"
+                  className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                >
+                  Name
+                </label>
+                <input
+                  type="text"
+                  id="name"
+                  value={createUserData.name}
+                  onChange={e => setCreateUserData({ ...createUserData, name: e.target.value })}
+                  required
+                  className="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:text-white"
+                />
+              </div>
+              <div>
+                <label
+                  htmlFor="email"
+                  className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                >
+                  Email
+                </label>
+                <input
+                  type="email"
+                  id="email"
+                  value={createUserData.email}
+                  onChange={e => setCreateUserData({ ...createUserData, email: e.target.value })}
+                  required
+                  className="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:text-white"
+                />
+              </div>
+              <div>
+                <label
+                  htmlFor="password"
+                  className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                >
+                  Password
+                </label>
+                <input
+                  type="password"
+                  id="password"
+                  value={createUserData.password}
+                  onChange={e => setCreateUserData({ ...createUserData, password: e.target.value })}
+                  required
+                  className="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:text-white"
+                />
+              </div>
+              <div>
+                <label
+                  htmlFor="role"
+                  className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                >
+                  Role
+                </label>
+                <select
+                  id="role"
+                  value={createUserData.role}
+                  onChange={e => {
+                    const newRole = e.target.value as UserRole;
+                    setCreateUserData({
+                      ...createUserData,
+                      role: newRole,
+                      // Clear admin permissions if role is not admin
+                      adminPermissions:
+                        newRole === 'admin'
+                          ? createUserData.adminPermissions
+                          : {
+                              canUpdateUserInfo: true,
+                              canDeleteUsers: false,
+                              canPromoteToAdmin: false,
+                              canDemoteAdmins: false,
+                            },
+                    });
+                  }}
+                  className="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:text-white"
+                >
+                  <option value="user">User</option>
+                  {/* Only super-admin or admin with canPromoteToAdmin permission can create admin users */}
+                  {(session?.user?.role === 'super-admin' ||
+                    (session?.user?.role === 'admin' &&
+                      session?.user?.adminPermissions?.canPromoteToAdmin)) && (
+                    <option value="admin">Admin</option>
+                  )}
+                  {/* Only super-admin can create super-admin users */}
+                  {session?.user?.role === 'super-admin' && (
+                    <option value="super-admin">Super Admin</option>
+                  )}
+                </select>
+              </div>
+            </div>
+
+            {/* Admin Permissions Section */}
+            {createUserData.role === 'admin' && (
+              <div className="mt-4 border-t pt-4 border-gray-200 dark:border-gray-700">
+                <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Admin Permissions
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                  <label className="flex items-center">
+                    <input
+                      type="checkbox"
+                      checked={createUserData.adminPermissions.canUpdateUserInfo}
+                      onChange={e =>
+                        setCreateUserData({
+                          ...createUserData,
+                          adminPermissions: {
+                            ...createUserData.adminPermissions,
+                            canUpdateUserInfo: e.target.checked,
+                          },
+                        })
+                      }
+                      className="mr-2 h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded dark:border-gray-700 dark:bg-gray-800"
+                    />
+                    <span>Can update user info</span>
+                  </label>
+                  <label className="flex items-center">
+                    <input
+                      type="checkbox"
+                      checked={createUserData.adminPermissions.canDeleteUsers}
+                      onChange={e =>
+                        setCreateUserData({
+                          ...createUserData,
+                          adminPermissions: {
+                            ...createUserData.adminPermissions,
+                            canDeleteUsers: e.target.checked,
+                          },
+                        })
+                      }
+                      className="mr-2 h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded dark:border-gray-700 dark:bg-gray-800"
+                    />
+                    <span>Can delete users</span>
+                  </label>
+                  <label className="flex items-center">
+                    <input
+                      type="checkbox"
+                      checked={createUserData.adminPermissions.canPromoteToAdmin}
+                      onChange={e =>
+                        setCreateUserData({
+                          ...createUserData,
+                          adminPermissions: {
+                            ...createUserData.adminPermissions,
+                            canPromoteToAdmin: e.target.checked,
+                          },
+                        })
+                      }
+                      className="mr-2 h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded dark:border-gray-700 dark:bg-gray-800"
+                    />
+                    <span>Can promote to admin</span>
+                  </label>
+                  <label className="flex items-center">
+                    <input
+                      type="checkbox"
+                      checked={createUserData.adminPermissions.canDemoteAdmins}
+                      onChange={e =>
+                        setCreateUserData({
+                          ...createUserData,
+                          adminPermissions: {
+                            ...createUserData.adminPermissions,
+                            canDemoteAdmins: e.target.checked,
+                          },
+                        })
+                      }
+                      className="mr-2 h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded dark:border-gray-700 dark:bg-gray-800"
+                    />
+                    <span>Can demote admins</span>
+                  </label>
+                </div>
+              </div>
+            )}
+
+            <div className="flex justify-end">
+              <button
+                type="submit"
+                disabled={createLoading}
+                className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {createLoading ? 'Processing...' : 'Save User'}
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
 
       <div className="bg-white dark:bg-gray-700 shadow-md rounded-lg overflow-x-auto">
         <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
@@ -374,24 +650,26 @@ export default function AdminUsersPage() {
                     </div>
                   ) : user.role === 'admin' ? (
                     <div className="flex flex-col gap-1">
-                      {user.adminPermissions?.canUpdateUserInfo ? (
-                        <span className="text-xs text-green-600 dark:text-green-400">
-                          ✓ Can update user info
-                        </span>
-                      ) : (
-                        <span className="text-xs text-gray-400 dark:text-gray-500">
-                          ✗ Cannot update user info
-                        </span>
-                      )}
-                      {user.adminPermissions?.canDeleteUsers ? (
-                        <span className="text-xs text-green-600 dark:text-green-400">
-                          ✓ Can delete users
-                        </span>
-                      ) : (
-                        <span className="text-xs text-gray-400 dark:text-gray-500">
-                          ✗ Cannot delete users
-                        </span>
-                      )}
+                      <span
+                        className={`text-xs ${user.adminPermissions?.canUpdateUserInfo ? 'text-green-600 dark:text-green-400' : 'text-gray-400 dark:text-gray-500'}`}
+                      >
+                        {user.adminPermissions?.canUpdateUserInfo ? '✓' : '✗'} Can update user info
+                      </span>
+                      <span
+                        className={`text-xs ${user.adminPermissions?.canDeleteUsers ? 'text-green-600 dark:text-green-400' : 'text-gray-400 dark:text-gray-500'}`}
+                      >
+                        {user.adminPermissions?.canDeleteUsers ? '✓' : '✗'} Can delete users
+                      </span>
+                      <span
+                        className={`text-xs ${user.adminPermissions?.canPromoteToAdmin ? 'text-green-600 dark:text-green-400' : 'text-gray-400 dark:text-gray-500'}`}
+                      >
+                        {user.adminPermissions?.canPromoteToAdmin ? '✓' : '✗'} Can promote to admin
+                      </span>
+                      <span
+                        className={`text-xs ${user.adminPermissions?.canDemoteAdmins ? 'text-green-600 dark:text-green-400' : 'text-gray-400 dark:text-gray-500'}`}
+                      >
+                        {user.adminPermissions?.canDemoteAdmins ? '✓' : '✗'} Can demote admins
+                      </span>
                     </div>
                   ) : (
                     <span className="text-xs text-gray-400 dark:text-gray-500">Standard user</span>
@@ -428,15 +706,30 @@ export default function AdminUsersPage() {
                           className="block w-full px-2 py-1 text-sm border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 dark:bg-gray-800 dark:text-white dark:border-gray-700"
                           disabled={
                             user._id === session?.user?.id || // Can't change own role
-                            session?.user?.role === 'admin' // Admins can't change roles
+                            // Admins can only change roles if they have permissions
+                            (session?.user?.role === 'admin' &&
+                              !(
+                                // Can promote user to admin if they have permission
+                                (
+                                  (user.role === 'user' &&
+                                    session?.user?.adminPermissions?.canPromoteToAdmin) ||
+                                  // Can demote admin to user if they have permission
+                                  (user.role === 'admin' &&
+                                    session?.user?.adminPermissions?.canDemoteAdmins)
+                                )
+                              ))
                           }
                         >
                           <option value="user">User</option>
+                          {/* Show Admin option for super-admins or admins with promotion permission */}
+                          {(session?.user?.role === 'super-admin' ||
+                            (session?.user?.role === 'admin' &&
+                              session?.user?.adminPermissions?.canPromoteToAdmin)) && (
+                            <option value="admin">Admin</option>
+                          )}
+                          {/* Only super-admins can make super-admins */}
                           {session?.user?.role === 'super-admin' && (
-                            <>
-                              <option value="admin">Admin</option>
-                              <option value="super-admin">Super Admin</option>
-                            </>
+                            <option value="super-admin">Super Admin</option>
                           )}
                         </select>
 
@@ -456,6 +749,8 @@ export default function AdminUsersPage() {
                                         adminPermissions: {
                                           canUpdateUserInfo: true,
                                           canDeleteUsers: false,
+                                          canPromoteToAdmin: false,
+                                          canDemoteAdmins: false,
                                         },
                                       }),
                                     });
@@ -472,6 +767,8 @@ export default function AdminUsersPage() {
                                               adminPermissions: {
                                                 canUpdateUserInfo: true,
                                                 canDeleteUsers: false,
+                                                canPromoteToAdmin: false,
+                                                canDemoteAdmins: false,
                                               },
                                             }
                                           : u
@@ -498,6 +795,8 @@ export default function AdminUsersPage() {
                                         adminPermissions: {
                                           canUpdateUserInfo: true,
                                           canDeleteUsers: true,
+                                          canPromoteToAdmin: true,
+                                          canDemoteAdmins: true,
                                         },
                                       }),
                                     });
@@ -514,6 +813,8 @@ export default function AdminUsersPage() {
                                               adminPermissions: {
                                                 canUpdateUserInfo: true,
                                                 canDeleteUsers: true,
+                                                canPromoteToAdmin: true,
+                                                canDemoteAdmins: true,
                                               },
                                             }
                                           : u
@@ -545,9 +846,13 @@ export default function AdminUsersPage() {
                                           adminPermissions: {
                                             ...(user.adminPermissions || {}),
                                             canUpdateUserInfo: e.target.checked,
-                                            // Keep delete permission as is
+                                            // Keep other permissions as is
                                             canDeleteUsers:
                                               user.adminPermissions?.canDeleteUsers || false,
+                                            canPromoteToAdmin:
+                                              user.adminPermissions?.canPromoteToAdmin || false,
+                                            canDemoteAdmins:
+                                              user.adminPermissions?.canDemoteAdmins || false,
                                           },
                                         }),
                                       });
@@ -572,6 +877,10 @@ export default function AdminUsersPage() {
                                                   canUpdateUserInfo: e.target.checked,
                                                   canDeleteUsers:
                                                     u.adminPermissions?.canDeleteUsers || false,
+                                                  canPromoteToAdmin:
+                                                    u.adminPermissions?.canPromoteToAdmin || false,
+                                                  canDemoteAdmins:
+                                                    u.adminPermissions?.canDemoteAdmins || false,
                                                 },
                                               }
                                             : u
@@ -601,6 +910,10 @@ export default function AdminUsersPage() {
                                             canUpdateUserInfo:
                                               user.adminPermissions?.canUpdateUserInfo || true,
                                             canDeleteUsers: e.target.checked,
+                                            canPromoteToAdmin:
+                                              user.adminPermissions?.canPromoteToAdmin || false,
+                                            canDemoteAdmins:
+                                              user.adminPermissions?.canDemoteAdmins || false,
                                           },
                                         }),
                                       });
@@ -625,6 +938,10 @@ export default function AdminUsersPage() {
                                                   canUpdateUserInfo:
                                                     u.adminPermissions?.canUpdateUserInfo || true,
                                                   canDeleteUsers: e.target.checked,
+                                                  canPromoteToAdmin:
+                                                    u.adminPermissions?.canPromoteToAdmin || false,
+                                                  canDemoteAdmins:
+                                                    u.adminPermissions?.canDemoteAdmins || false,
                                                 },
                                               }
                                             : u
@@ -637,6 +954,128 @@ export default function AdminUsersPage() {
                                   className="mr-2 h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded dark:border-gray-700 dark:bg-gray-800"
                                 />
                                 <span>Can delete users</span>
+                              </label>
+
+                              <label className="flex items-center">
+                                <input
+                                  type="checkbox"
+                                  checked={user.adminPermissions?.canPromoteToAdmin ?? false}
+                                  onChange={async e => {
+                                    try {
+                                      const response = await fetch(`/api/admin/users/${user._id}`, {
+                                        method: 'PUT',
+                                        headers: { 'Content-Type': 'application/json' },
+                                        body: JSON.stringify({
+                                          adminPermissions: {
+                                            ...(user.adminPermissions || {}),
+                                            canUpdateUserInfo:
+                                              user.adminPermissions?.canUpdateUserInfo || true,
+                                            canDeleteUsers:
+                                              user.adminPermissions?.canDeleteUsers || false,
+                                            canPromoteToAdmin: e.target.checked,
+                                            canDemoteAdmins:
+                                              user.adminPermissions?.canDemoteAdmins || false,
+                                          },
+                                        }),
+                                      });
+
+                                      if (!response.ok) {
+                                        throw new Error('Failed to update permissions');
+                                      }
+
+                                      // Show a temporary success message
+                                      setError(
+                                        `Successfully ${e.target.checked ? 'granted' : 'removed'} permission to promote users to admin`
+                                      );
+                                      setTimeout(() => setError(null), 3000);
+
+                                      // Update local state
+                                      setUsers(prevUsers =>
+                                        prevUsers.map(u =>
+                                          u._id === user._id
+                                            ? {
+                                                ...u,
+                                                adminPermissions: {
+                                                  canUpdateUserInfo:
+                                                    u.adminPermissions?.canUpdateUserInfo || true,
+                                                  canDeleteUsers:
+                                                    u.adminPermissions?.canDeleteUsers || false,
+                                                  canPromoteToAdmin: e.target.checked,
+                                                  canDemoteAdmins:
+                                                    u.adminPermissions?.canDemoteAdmins || false,
+                                                },
+                                              }
+                                            : u
+                                        )
+                                      );
+                                    } catch (err: any) {
+                                      setError(err.message || 'Failed to update admin permissions');
+                                    }
+                                  }}
+                                  className="mr-2 h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded dark:border-gray-700 dark:bg-gray-800"
+                                />
+                                <span>Can promote to admin</span>
+                              </label>
+
+                              <label className="flex items-center">
+                                <input
+                                  type="checkbox"
+                                  checked={user.adminPermissions?.canDemoteAdmins ?? false}
+                                  onChange={async e => {
+                                    try {
+                                      const response = await fetch(`/api/admin/users/${user._id}`, {
+                                        method: 'PUT',
+                                        headers: { 'Content-Type': 'application/json' },
+                                        body: JSON.stringify({
+                                          adminPermissions: {
+                                            ...(user.adminPermissions || {}),
+                                            canUpdateUserInfo:
+                                              user.adminPermissions?.canUpdateUserInfo || true,
+                                            canDeleteUsers:
+                                              user.adminPermissions?.canDeleteUsers || false,
+                                            canPromoteToAdmin:
+                                              user.adminPermissions?.canPromoteToAdmin || false,
+                                            canDemoteAdmins: e.target.checked,
+                                          },
+                                        }),
+                                      });
+
+                                      if (!response.ok) {
+                                        throw new Error('Failed to update permissions');
+                                      }
+
+                                      // Show a temporary success message
+                                      setError(
+                                        `Successfully ${e.target.checked ? 'granted' : 'removed'} permission to demote admins`
+                                      );
+                                      setTimeout(() => setError(null), 3000);
+
+                                      // Update local state
+                                      setUsers(prevUsers =>
+                                        prevUsers.map(u =>
+                                          u._id === user._id
+                                            ? {
+                                                ...u,
+                                                adminPermissions: {
+                                                  canUpdateUserInfo:
+                                                    u.adminPermissions?.canUpdateUserInfo || true,
+                                                  canDeleteUsers:
+                                                    u.adminPermissions?.canDeleteUsers || false,
+                                                  canPromoteToAdmin:
+                                                    u.adminPermissions?.canPromoteToAdmin || false,
+                                                  canDemoteAdmins: e.target.checked,
+                                                },
+                                              }
+                                            : u
+                                        )
+                                      );
+                                    } catch (err: any) {
+                                      setError(err.message || 'Failed to update admin permissions');
+                                    }
+                                  }}
+                                  className="mr-2 h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded dark:border-gray-700 dark:bg-gray-800"
+                                />
+                                <span>Can demote admins</span>
                               </label>
                             </div>
                           </div>

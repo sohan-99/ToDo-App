@@ -76,6 +76,8 @@ export async function PUT(req: NextRequest, { params }: Params) {
       updateData.adminPermissions = newAdminPermissions || {
         canUpdateUserInfo: true,
         canDeleteUsers: false,
+        canPromoteToAdmin: false,
+        canDemoteAdmins: false,
       };
     } else if (role === 'user' || role === 'super-admin') {
       // Remove adminPermissions field completely for non-admin roles
@@ -102,24 +104,52 @@ export async function PUT(req: NextRequest, { params }: Params) {
         );
       }
 
-      // Admins cannot update user roles
+      // Check if admin can update user roles
       if (role) {
-        return NextResponse.json(
-          {
-            error: 'Regular admins do not have permission to change user roles',
-          },
-          { status: 403 }
-        );
+        // Check if promoting to admin
+        if (role === 'admin' && userToUpdate.role === 'user') {
+          if (!adminPermissions?.canPromoteToAdmin) {
+            return NextResponse.json(
+              {
+                error: 'You do not have permission to promote users to admin',
+              },
+              { status: 403 }
+            );
+          }
+        }
+        // Check if demoting from admin
+        else if (role === 'user' && userToUpdate.role === 'admin') {
+          if (!adminPermissions?.canDemoteAdmins) {
+            return NextResponse.json(
+              {
+                error: 'You do not have permission to demote admins',
+              },
+              { status: 403 }
+            );
+          }
+        }
+        // Admin cannot promote to super-admin
+        else if (role === 'super-admin') {
+          return NextResponse.json(
+            {
+              error: 'Only super-admins can promote users to super-admin',
+            },
+            { status: 403 }
+          );
+        }
       }
 
-      // Admins cannot update admin permissions
+      // Check if admin can update admin permissions
       if (newAdminPermissions) {
-        return NextResponse.json(
-          {
-            error: 'Regular admins do not have permission to update admin permissions',
-          },
-          { status: 403 }
-        );
+        // Only allow updating admin permissions if user is an admin and current admin has permission to promote/demote
+        if (userToUpdate.role !== 'admin' && !adminPermissions?.canPromoteToAdmin) {
+          return NextResponse.json(
+            {
+              error: 'You do not have permission to update admin permissions',
+            },
+            { status: 403 }
+          );
+        }
       }
 
       // Admins can only update regular users' information

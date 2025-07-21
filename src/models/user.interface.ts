@@ -5,6 +5,8 @@ export type UserRole = 'user' | 'admin' | 'super-admin';
 export interface AdminPermissions {
   canUpdateUserInfo: boolean;
   canDeleteUsers: boolean;
+  canPromoteToAdmin: boolean;
+  canDemoteAdmins: boolean;
 }
 
 export interface IUser {
