@@ -19,7 +19,6 @@ export default function GoogleAuthButton({
     try {
       await signIn('google', { callbackUrl });
     } catch {
-      // Handle Google sign-in error silently
     } finally {
       setIsLoading(false);
     }

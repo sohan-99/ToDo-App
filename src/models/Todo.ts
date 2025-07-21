@@ -1,7 +1,6 @@
 import mongoose from 'mongoose';
 import { ITodo } from '@/types/todo';
 
-// Extend the ITodo interface to include userId for authentication
 export interface IMongoTodo extends Omit<ITodo, 'id'> {
   _id: mongoose.Types.ObjectId;
   userId: mongoose.Types.ObjectId;

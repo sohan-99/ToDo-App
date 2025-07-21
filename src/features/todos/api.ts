@@ -1,7 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { ITodo } from '@/types/todo';
 
-// Define stats types
 export interface UserStats {
   total: number;
   active: number;
@@ -24,7 +23,7 @@ export const todosApi = createApi({
   reducerPath: 'todosApi',
   baseQuery: fetchBaseQuery({
     baseUrl: '/api/',
-    credentials: 'include', // Include cookies for authentication
+    credentials: 'include',
   }),
   tagTypes: ['Todos'],
   endpoints: builder => ({

@@ -2,12 +2,9 @@ import mongoose from 'mongoose';
 
 export type UserRole = 'user' | 'admin' | 'super-admin';
 
-/**
- * Admin-specific permissions for granular control
- */
 export interface AdminPermissions {
-  canUpdateUserInfo: boolean; // Can update user name and email
-  canDeleteUsers: boolean; // Can delete regular users
+  canUpdateUserInfo: boolean;
+  canDeleteUsers: boolean;
 }
 
 export interface IUser {
@@ -17,7 +14,7 @@ export interface IUser {
   password: string;
   image?: string;
   role: UserRole;
-  adminPermissions?: AdminPermissions; // Only used if role is 'admin'
+  adminPermissions?: AdminPermissions;
   createdAt: Date;
   updatedAt: Date;
 }

@@ -27,7 +27,6 @@ export const authConfig: NextAuthConfig = {
           const user = await UserModel.findOne({ email: credentials.email });
           if (!user) return null;
 
-          // Get the password as a string
           const passwordString = String(user.get('password'));
           if (!passwordString) return null;
 
@@ -36,13 +35,20 @@ export const authConfig: NextAuthConfig = {
           const isValid = await verifyPassword(passwordInput, passwordString);
           if (!isValid) return null;
 
+          const adminPermissions = user.adminPermissions
+            ? {
+                canUpdateUserInfo: user.adminPermissions.canUpdateUserInfo,
+                canDeleteUsers: user.adminPermissions.canDeleteUsers,
+              }
+            : undefined;
+
           return {
             id: user._id.toString(),
             email: user.email,
             name: user.name,
             image: user.image,
             role: user.role || 'user',
-            adminPermissions: user.adminPermissions,
+            adminPermissions: adminPermissions,
           };
         } catch {
           return null;
@@ -55,26 +61,34 @@ export const authConfig: NextAuthConfig = {
     }),
   ],
   callbacks: {
-    // Add user ID and role to token
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
         token.role = user.role || 'user';
         if (user.role === 'admin' && user.adminPermissions) {
-          token.adminPermissions = user.adminPermissions;
+          token.adminPermissions = {
+            canUpdateUserInfo: user.adminPermissions.canUpdateUserInfo,
+            canDeleteUsers: user.adminPermissions.canDeleteUsers,
+          };
         }
       }
       return token;
     },
-    // Add token ID and role to session user
     async session({ session, token }) {
       if (token && session.user) {
         session.user.id = token.id as string;
         session.user.role = token.role as 'user' | 'admin' | 'super-admin';
-        if (token.adminPermissions) {
-          session.user.adminPermissions = token.adminPermissions as {
-            canUpdateUserInfo: boolean;
-            canDeleteUsers: boolean;
+        if (
+          token.adminPermissions &&
+          typeof token.adminPermissions === 'object' &&
+          'canUpdateUserInfo' in token.adminPermissions &&
+          'canDeleteUsers' in token.adminPermissions
+        ) {
+          session.user.adminPermissions = {
+            canUpdateUserInfo:
+              (token.adminPermissions as { canUpdateUserInfo: boolean }).canUpdateUserInfo === true,
+            canDeleteUsers:
+              (token.adminPermissions as { canDeleteUsers: boolean }).canDeleteUsers === true,
           };
         }
       }
@@ -95,18 +109,21 @@ export const authConfig: NextAuthConfig = {
               name: user.name,
               email: user.email,
               image: user.image,
-              role: 'user', // Default role for new users
+              role: 'user',
             },
           },
           { upsert: true, new: true }
         );
 
-        // Update user ID and role to match our MongoDB user
         user.id = dbUser._id.toString();
         user.role = dbUser.role;
-      } catch {
-        // Silently handle errors and proceed with sign-in
-      }
+        if (dbUser.role === 'admin' && dbUser.adminPermissions) {
+          user.adminPermissions = {
+            canUpdateUserInfo: dbUser.adminPermissions.canUpdateUserInfo,
+            canDeleteUsers: dbUser.adminPermissions.canDeleteUsers,
+          };
+        }
+      } catch {}
 
       return true;
     },
@@ -118,7 +135,7 @@ export const authConfig: NextAuthConfig = {
   },
   session: {
     strategy: 'jwt',
-    maxAge: 30 * 24 * 60 * 60, // 30 days
+    maxAge: 30 * 24 * 60 * 60,
   },
   cookies: {
     sessionToken: {

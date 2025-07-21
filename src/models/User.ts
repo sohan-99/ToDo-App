@@ -29,7 +29,7 @@ const UserSchema = new mongoose.Schema<IUser>(
     },
     password: {
       type: String,
-      required: false, // Optional for OAuth users
+      required: false,
     },
     image: {
       type: String,
@@ -52,5 +52,4 @@ const UserSchema = new mongoose.Schema<IUser>(
   }
 );
 
-// Check if model is already defined to avoid 'Cannot overwrite' error in development
 export default mongoose.models.User || mongoose.model<IUser>('User', UserSchema);
