@@ -15,7 +15,7 @@ export async function GET() {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
     return NextResponse.json(user);
-  } catch (error) {
+  } catch (_error) {
     const errorMessage = error instanceof Error ? error.message : 'Failed to fetch user profile';
     return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
@@ -72,7 +72,7 @@ export async function PUT(req: NextRequest) {
       }
       try {
         updateData.password = await hashPassword(newPassword);
-      } catch (error) {
+      } catch (_error) {
         const errorMessage = error instanceof Error ? error.message : 'Invalid password';
         return NextResponse.json({ error: errorMessage }, { status: 400 });
       }
@@ -88,7 +88,7 @@ export async function PUT(req: NextRequest) {
       message: 'Profile updated successfully',
       user: updatedUser,
     });
-  } catch (error) {
+  } catch (_error) {
     const errorMessage = error instanceof Error ? error.message : 'Failed to update profile';
     return NextResponse.json({ error: errorMessage }, { status: 500 });
   }

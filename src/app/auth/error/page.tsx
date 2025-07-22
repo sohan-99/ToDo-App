@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
+import { showToast } from '@/lib/toast';
 export default function AuthError() {
   const searchParams = useSearchParams();
   const [errorMessage, setErrorMessage] = useState<string>(
@@ -9,7 +10,10 @@ export default function AuthError() {
   );
   useEffect(() => {
     const error = searchParams.get('error');
-    console.log('Auth error received:', error);
+    if (error) {
+      showToast.error(`Authentication error: ${error}`);
+    }
+
     if (error === 'CredentialsSignin') {
       setErrorMessage('Invalid email or password');
     } else if (error === 'OAuthAccountNotLinked') {

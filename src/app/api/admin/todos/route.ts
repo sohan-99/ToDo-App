@@ -3,6 +3,7 @@ import { connectToDatabase } from '@/lib/mongodb';
 import TodoModel from '@/models/Todo';
 import { auth } from '@/app/api/auth/[...nextauth]/route';
 import { RolePermissions } from '@/lib/permissions';
+import { showToast } from '@/lib/toast';
 
 // GET all todos (super-admin only)
 export async function GET(req: NextRequest) {
@@ -53,10 +54,10 @@ export async function GET(req: NextRequest) {
       updatedAt: todo.updatedAt,
       user: todo.userId
         ? {
-            id: todo.userId._id,
-            name: todo.userId.name,
-            email: todo.userId.email,
-          }
+          id: todo.userId._id,
+          name: todo.userId.name,
+          email: todo.userId.email,
+        }
         : null,
     }));
 
@@ -72,8 +73,8 @@ export async function GET(req: NextRequest) {
       },
       { status: 200 }
     );
-  } catch (error) {
-    console.error('Error fetching todos:', error);
+  } catch (_error) {
+    showToast.info('Error updating todo', _error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
@@ -121,8 +122,8 @@ export async function PUT(req: NextRequest) {
       },
       { status: 200 }
     );
-  } catch (error) {
-    console.error('Error updating todo:', error);
+  } catch (_error) {
+    showToast.info('Error updating todo', _error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

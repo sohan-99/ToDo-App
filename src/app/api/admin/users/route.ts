@@ -17,7 +17,7 @@ export async function GET() {
       }
     ).sort({ createdAt: -1 });
     return NextResponse.json(users);
-  } catch (error) {
+  } catch (_error) {
     const errorMessage = error instanceof Error ? error.message : 'Internal server error';
     return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
       return await handleCreateUser(req, session, body.user);
     }
     return NextResponse.json({ error: 'Invalid request' }, { status: 400 });
-  } catch (error) {
+  } catch (_error) {
     const errorMessage = error instanceof Error ? error.message : 'Internal server error';
     return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
@@ -125,7 +125,7 @@ async function handleCreateUser(
       { message: 'User created successfully', user: responseUser },
       { status: 201 }
     );
-  } catch (error) {
+  } catch (_error) {
     const errorMessage = error instanceof Error ? error.message : 'Internal server error';
     return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
@@ -189,7 +189,7 @@ async function handleBulkDelete(
       message: `Successfully deleted ${result.deletedCount} users`,
       deletedCount: result.deletedCount,
     });
-  } catch (error) {
+  } catch (_error) {
     const errorMessage = error instanceof Error ? error.message : 'Internal server error';
     return NextResponse.json({ error: errorMessage }, { status: 500 });
   }

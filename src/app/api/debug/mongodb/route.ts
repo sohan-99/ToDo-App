@@ -13,7 +13,7 @@ export async function GET() {
       },
       { status: 200 }
     );
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json(
       {
         status: 'Error connecting to MongoDB',

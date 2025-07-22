@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
       { message: 'User created successfully', user: userObject },
       { status: 201 }
     );
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

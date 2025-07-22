@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { connectToDatabase } from '@/lib/mongodb';
 import TodoModel from '@/models/Todo';
 import { auth } from '@/app/api/auth/[...nextauth]/route';
+import { showToast } from '@/lib/toast';
 export async function GET() {
   try {
     const session = await auth();
@@ -17,8 +18,8 @@ export async function GET() {
       completed: todo.completed,
     }));
     return NextResponse.json(transformedTodos, { status: 200 });
-  } catch (error) {
-    console.error('Error fetching todos:', error);
+  } catch (_error) {
+    showToast.info('Error fetching todos', _error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
@@ -45,8 +46,8 @@ export async function POST(req: NextRequest) {
       completed: todo.completed,
     };
     return NextResponse.json(transformedTodo, { status: 201 });
-  } catch (error) {
-    console.error('Error creating todo:', error);
+  } catch (_error) {
+    showToast.info('Error creating todo', _error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

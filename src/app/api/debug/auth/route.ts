@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { auth } from '@/app/api/auth/[...nextauth]/route';
+import { showToast } from '@/lib/toast';
 export async function GET() {
   try {
     const session = await auth();
@@ -25,7 +26,7 @@ export async function GET() {
       );
     }
   } catch (error) {
-    console.error('Auth test error:', error);
+   showToast.info('Error checking authentication', error);
     return NextResponse.json(
       {
         status: 'Error checking authentication',

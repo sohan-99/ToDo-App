@@ -30,7 +30,7 @@ export async function GET(req: NextRequest, { params }: Params) {
       completed: todo.completed,
     };
     return NextResponse.json(transformedTodo, { status: 200 });
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
@@ -61,7 +61,7 @@ export async function PUT(req: NextRequest, { params }: Params) {
       completed: todo.completed,
     };
     return NextResponse.json(transformedTodo, { status: 200 });
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
@@ -82,7 +82,7 @@ export async function DELETE(req: NextRequest, { params }: Params) {
       return NextResponse.json({ error: 'Todo not found' }, { status: 404 });
     }
     return NextResponse.json({ message: 'Todo deleted successfully' }, { status: 200 });
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

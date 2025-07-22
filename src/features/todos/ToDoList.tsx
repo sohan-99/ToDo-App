@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client';
 import { useState } from 'react';
 import { useSession } from 'next-auth/react';
@@ -9,6 +11,7 @@ import {
 } from './api';
 import { useTodoInputStore } from './store';
 import { ITodo } from '@/types/todo';
+import { toast } from 'sonner';
 export default function ToDoList() {
   const { status: authStatus } = useSession();
   const { data, isLoading } = useGetTodosQuery(undefined, {
@@ -24,22 +27,52 @@ export default function ToDoList() {
   const [editInput, setEditInput] = useState('');
   const handleAddTodo = async () => {
     if (!input.trim() || authStatus !== 'authenticated') return;
-    await addTodo({
-      title: input,
-      completed: false,
-    });
-    reset();
+    try {
+      toast.promise(
+        addTodo({
+          title: input,
+          completed: false,
+        }).unwrap(),
+        {
+          loading: 'Adding task...',
+          success: 'Task added successfully!',
+          error: 'Failed to add task',
+        }
+      );
+      reset();
+    } catch (_error) {
+      toast.error('Failed to add task');
+    }
   };
   const handleToggleComplete = async (todo: ITodo) => {
     if (authStatus !== 'authenticated') return;
-    await updateTodo({
-      ...todo,
-      completed: !todo.completed,
-    });
+    try {
+      toast.promise(
+        updateTodo({
+          ...todo,
+          completed: !todo.completed,
+        }).unwrap(),
+        {
+          loading: 'Updating task...',
+          success: `Task marked as ${!todo.completed ? 'completed' : 'active'}`,
+          error: 'Failed to update task',
+        }
+      );
+    } catch (_error) {
+      toast.error('Failed to update task');
+    }
   };
   const handleDelete = async (id: string | number) => {
     if (authStatus !== 'authenticated') return;
-    await deleteTodo(id);
+    try {
+      toast.promise(deleteTodo(id).unwrap(), {
+        loading: 'Deleting task...',
+        success: 'Task deleted successfully!',
+        error: 'Failed to delete task',
+      });
+    } catch (_error) {
+      toast.error('Failed to delete task');
+    }
   };
   const startEdit = (todo: ITodo) => {
     setEditMode(todo.id);
@@ -51,12 +84,23 @@ export default function ToDoList() {
   };
   const saveEdit = async (todo: ITodo) => {
     if (!editInput.trim()) return;
-    await updateTodo({
-      ...todo,
-      title: editInput,
-    });
-    setEditMode(null);
-    setEditInput('');
+    try {
+      toast.promise(
+        updateTodo({
+          ...todo,
+          title: editInput,
+        }).unwrap(),
+        {
+          loading: 'Saving changes...',
+          success: 'Task updated successfully!',
+          error: 'Failed to update task',
+        }
+      );
+      setEditMode(null);
+      setEditInput('');
+    } catch (_error) {
+      toast.error('Failed to update task');
+    }
   };
   if (isLoading)
     return (

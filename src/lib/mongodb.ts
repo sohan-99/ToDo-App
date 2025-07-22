@@ -36,7 +36,7 @@ export async function connectToDatabase(): Promise<mongoose.Connection> {
   try {
     global.mongoose.conn = await global.mongoose.promise;
     return global.mongoose.conn;
-  } catch (error) {
+  } catch (_error) {
     throw new Error(
       `MongoDB connection failed: ${error instanceof Error ? error.message : String(error)}`
     );

@@ -2,11 +2,14 @@
 import { useEffect } from 'react';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
+import { showToast } from '@/lib/toast';
 export default function AuthDebug() {
   const { data: session, status } = useSession();
   useEffect(() => {
-    console.log('Auth debug - Session status:', status);
-    console.log('Auth debug - Session data:', session);
+    showToast.info(`Auth debug - Session status: ${status}`, null);
+    if (session) {
+      showToast.info('Session data available', null);
+    }
   }, [session, status]);
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
