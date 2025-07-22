@@ -1,13 +1,11 @@
 import mongoose from 'mongoose';
 import { ITodo } from '@/types/todo';
-
 export interface IMongoTodo extends Omit<ITodo, 'id'> {
   _id: mongoose.Types.ObjectId;
   userId: mongoose.Types.ObjectId;
   createdAt: Date;
   updatedAt: Date;
 }
-
 const TodoSchema = new mongoose.Schema<IMongoTodo>(
   {
     title: {
@@ -29,5 +27,4 @@ const TodoSchema = new mongoose.Schema<IMongoTodo>(
     timestamps: true,
   }
 );
-
 export default mongoose.models.Todo || mongoose.model<IMongoTodo>('Todo', TodoSchema);

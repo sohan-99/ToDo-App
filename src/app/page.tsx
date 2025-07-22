@@ -1,11 +1,8 @@
 import ToDoList from '@/features/todos/ToDoList';
 import TodoStats from '@/features/todos/TodoStats';
 import { auth } from '@/app/api/auth/[...nextauth]/route';
-
 export default async function HomePage() {
-  // Get the session server-side for initial render
   const session = await auth();
-
   return (
     <main className="min-h-screen bg-gray-50 dark:bg-gray-900 dark:text-white transition-colors duration-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
@@ -17,7 +14,6 @@ export default async function HomePage() {
             Stay organized and boost your productivity
           </p>
         </div>
-
         {session ? (
           <>
             <TodoStats />
@@ -36,7 +32,6 @@ export default async function HomePage() {
             </div>
           </div>
         )}
-
         <footer className="mt-16 text-center">
           <p className="text-sm text-gray-500 dark:text-gray-400">
             © {new Date().getFullYear()} TaskMaster. All rights reserved.

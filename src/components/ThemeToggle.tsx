@@ -1,20 +1,15 @@
 'use client';
-
 import { useTheme } from 'next-themes';
 import { useEffect, useState } from 'react';
-
 export default function ThemeToggle() {
   const [mounted, setMounted] = useState(false);
   const { theme, setTheme } = useTheme();
-
   useEffect(() => {
     setMounted(true);
   }, []);
-
   if (!mounted) {
     return null;
   }
-
   return (
     <button
       className="p-2 rounded-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800"

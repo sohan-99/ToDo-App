@@ -1,6 +1,5 @@
 import mongoose from 'mongoose';
 import { IUser, AdminPermissions } from './user.interface';
-
 const AdminPermissionsSchema = new mongoose.Schema<AdminPermissions>(
   {
     canUpdateUserInfo: {
@@ -22,7 +21,6 @@ const AdminPermissionsSchema = new mongoose.Schema<AdminPermissions>(
   },
   { _id: false }
 );
-
 const UserSchema = new mongoose.Schema<IUser>(
   {
     name: {
@@ -61,5 +59,4 @@ const UserSchema = new mongoose.Schema<IUser>(
     timestamps: true,
   }
 );
-
 export default mongoose.models.User || mongoose.model<IUser>('User', UserSchema);

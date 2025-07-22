@@ -1,5 +1,4 @@
 'use client';
-
 import { useState } from 'react';
 import { useSession } from 'next-auth/react';
 import {
@@ -10,62 +9,48 @@ import {
 } from './api';
 import { useTodoInputStore } from './store';
 import { ITodo } from '@/types/todo';
-
 export default function ToDoList() {
   const { status: authStatus } = useSession();
   const { data, isLoading } = useGetTodosQuery(undefined, {
-    // Skip the query if user is not authenticated
     skip: authStatus !== 'authenticated',
   });
   const input = useTodoInputStore(s => s.input);
   const setInput = useTodoInputStore(s => s.setInput);
   const reset = useTodoInputStore(s => s.reset);
-
   const [addTodo] = useAddTodoMutation();
   const [deleteTodo] = useDeleteTodoMutation();
   const [updateTodo] = useUpdateTodoMutation();
-
   const [editMode, setEditMode] = useState<string | number | null>(null);
   const [editInput, setEditInput] = useState('');
-
   const handleAddTodo = async () => {
     if (!input.trim() || authStatus !== 'authenticated') return;
-
     await addTodo({
       title: input,
       completed: false,
     });
     reset();
   };
-
   const handleToggleComplete = async (todo: ITodo) => {
     if (authStatus !== 'authenticated') return;
-
     await updateTodo({
       ...todo,
       completed: !todo.completed,
     });
   };
-
   const handleDelete = async (id: string | number) => {
     if (authStatus !== 'authenticated') return;
-
     await deleteTodo(id);
   };
-
   const startEdit = (todo: ITodo) => {
     setEditMode(todo.id);
     setEditInput(todo.title);
   };
-
   const cancelEdit = () => {
     setEditMode(null);
     setEditInput('');
   };
-
   const saveEdit = async (todo: ITodo) => {
     if (!editInput.trim()) return;
-
     await updateTodo({
       ...todo,
       title: editInput,
@@ -73,14 +58,12 @@ export default function ToDoList() {
     setEditMode(null);
     setEditInput('');
   };
-
   if (isLoading)
     return (
       <div className="flex justify-center items-center h-64">
         <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-indigo-500"></div>
       </div>
     );
-
   return (
     <div className="max-w-xl mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
       <div className="bg-gradient-to-r from-indigo-500 to-purple-600 p-6">
@@ -103,7 +86,6 @@ export default function ToDoList() {
         </h1>
         <p className="text-indigo-100 mt-1">Organize your day efficiently</p>
       </div>
-
       <div className="p-6">
         <div className="flex mb-6">
           <input
@@ -133,7 +115,6 @@ export default function ToDoList() {
             Add
           </button>
         </div>
-
         {data?.length === 0 ? (
           <div className="text-center py-8">
             <svg

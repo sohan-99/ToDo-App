@@ -1,17 +1,12 @@
 'use client';
-
 import { useGetTodosQuery } from './api';
-
 export default function TodoStats() {
   const { data } = useGetTodosQuery();
-
   if (!data) return null;
-
   const totalTasks = data.length;
   const completedTasks = data.filter(todo => todo.completed).length;
   const pendingTasks = totalTasks - completedTasks;
   const completionRate = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
-
   return (
     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-8 mb-8">
       <div className="bg-white dark:bg-gray-800 rounded-xl shadow p-6 flex items-center animate-fade-in">
@@ -36,7 +31,6 @@ export default function TodoStats() {
           <p className="text-xl font-bold text-gray-900 dark:text-white">{totalTasks}</p>
         </div>
       </div>
-
       <div
         className="bg-white dark:bg-gray-800 rounded-xl shadow p-6 flex items-center animate-fade-in"
         style={{ animationDelay: '0.1s' }}
@@ -57,7 +51,6 @@ export default function TodoStats() {
           <p className="text-xl font-bold text-gray-900 dark:text-white">{completedTasks}</p>
         </div>
       </div>
-
       <div
         className="bg-white dark:bg-gray-800 rounded-xl shadow p-6 flex items-center animate-fade-in"
         style={{ animationDelay: '0.2s' }}
@@ -83,7 +76,6 @@ export default function TodoStats() {
           <p className="text-xl font-bold text-gray-900 dark:text-white">{pendingTasks}</p>
         </div>
       </div>
-
       <div
         className="bg-white dark:bg-gray-800 rounded-xl shadow p-6 sm:col-span-3 animate-fade-in"
         style={{ animationDelay: '0.3s' }}

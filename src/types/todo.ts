@@ -3,7 +3,6 @@ export interface ITodo {
   title: string;
   completed: boolean;
 }
-
 export interface IUser {
   id: string;
   name: string;

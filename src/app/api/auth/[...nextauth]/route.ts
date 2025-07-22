@@ -5,7 +5,6 @@ import UserModel from '@/models/User';
 import { verifyPassword } from '@/lib/auth';
 import type { NextAuthConfig } from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
-
 export const authConfig: NextAuthConfig = {
   debug: process.env.NODE_ENV !== 'production',
   providers: [
@@ -21,27 +20,21 @@ export const authConfig: NextAuthConfig = {
           if (!credentials?.email || !credentials?.password) {
             return null;
           }
-
           await connectToDatabase();
-
           const user = await UserModel.findOne({ email: credentials.email });
           if (!user) return null;
-
           const passwordString = String(user.get('password'));
           if (!passwordString) return null;
-
           const passwordInput =
             typeof credentials.password === 'string' ? credentials.password : '';
           const isValid = await verifyPassword(passwordInput, passwordString);
           if (!isValid) return null;
-
           const adminPermissions = user.adminPermissions
             ? {
                 canUpdateUserInfo: user.adminPermissions.canUpdateUserInfo,
                 canDeleteUsers: user.adminPermissions.canDeleteUsers,
               }
             : undefined;
-
           return {
             id: user._id.toString(),
             email: user.email,
@@ -95,13 +88,9 @@ export const authConfig: NextAuthConfig = {
       return session;
     },
     async signIn({ user, account }) {
-      // Always allow sign-in for non-Google providers
       if (account?.provider !== 'google') return true;
-
       try {
         await connectToDatabase();
-
-        // Check if user already exists or create a new one
         const dbUser = await UserModel.findOneAndUpdate(
           { email: user.email },
           {
@@ -114,7 +103,6 @@ export const authConfig: NextAuthConfig = {
           },
           { upsert: true, new: true }
         );
-
         user.id = dbUser._id.toString();
         user.role = dbUser.role;
         if (dbUser.role === 'admin' && dbUser.adminPermissions) {
@@ -124,7 +112,6 @@ export const authConfig: NextAuthConfig = {
           };
         }
       } catch {}
-
       return true;
     },
   },
@@ -150,6 +137,5 @@ export const authConfig: NextAuthConfig = {
   },
   secret: process.env.NEXTAUTH_SECRET,
 };
-
 export const { handlers, auth, signIn, signOut } = NextAuth(authConfig);
 export const { GET, POST } = handlers;

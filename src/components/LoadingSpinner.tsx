@@ -1,10 +1,8 @@
 'use client';
-
 export interface LoadingSpinnerProps {
   size?: 'small' | 'medium' | 'large';
   color?: 'primary' | 'secondary' | 'white';
 }
-
 export default function LoadingSpinner({
   size = 'medium',
   color = 'primary',
@@ -14,13 +12,11 @@ export default function LoadingSpinner({
     medium: 'h-8 w-8',
     large: 'h-12 w-12',
   };
-
   const colorClasses = {
     primary: 'border-indigo-500',
     secondary: 'border-gray-500',
     white: 'border-white',
   };
-
   return (
     <div className="flex justify-center items-center">
       <div

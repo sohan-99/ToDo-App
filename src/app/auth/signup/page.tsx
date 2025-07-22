@@ -1,11 +1,9 @@
 'use client';
-
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { signIn } from 'next-auth/react';
 import Link from 'next/link';
 import GoogleAuthButton from '@/components/GoogleAuthButton';
-
 export default function SignupPage() {
   const router = useRouter();
   const [name, setName] = useState('');
@@ -13,18 +11,14 @@ export default function SignupPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setError('');
-
     try {
-      // Validate password length before sending request
       if (password.length < 8) {
         throw new Error('Password must be at least 8 characters long');
       }
-
       const response = await fetch('/api/auth/register', {
         method: 'POST',
         headers: {
@@ -32,25 +26,18 @@ export default function SignupPage() {
         },
         body: JSON.stringify({ name, email, password }),
       });
-
       const data = await response.json();
-
       if (!response.ok) {
         throw new Error(data.error || 'Registration failed');
       }
-
-      // On successful registration, attempt to sign in
       const signInResult = await signIn('credentials', {
         redirect: false,
         email,
         password,
       });
-
       if (signInResult?.error) {
-        // If auto sign-in fails, redirect to sign-in page with a success message
         router.replace('/auth/signin?registered=true');
       } else {
-        // Redirect to home page on successful auto sign-in
         router.replace('/');
         router.refresh();
       }
@@ -60,7 +47,6 @@ export default function SignupPage() {
       setIsLoading(false);
     }
   };
-
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
@@ -68,7 +54,6 @@ export default function SignupPage() {
           Create a new account
         </h2>
       </div>
-
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white dark:bg-gray-800 py-8 px-4 shadow sm:rounded-lg sm:px-10">
           <form className="space-y-6" onSubmit={handleSubmit}>
@@ -77,7 +62,6 @@ export default function SignupPage() {
                 <p className="text-red-700 dark:text-red-400">{error}</p>
               </div>
             )}
-
             <div>
               <label
                 htmlFor="name"
@@ -94,14 +78,13 @@ export default function SignupPage() {
                   required
                   value={name}
                   onChange={e => setName(e.target.value)}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 
+                  className="appearance-none block w-full px-3 py-2 border border-gray-300
                              dark:border-gray-700 dark:bg-gray-700 dark:text-white
-                             rounded-md shadow-sm placeholder-gray-400 
+                             rounded-md shadow-sm placeholder-gray-400
                              focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                 />
               </div>
             </div>
-
             <div>
               <label
                 htmlFor="email"
@@ -118,14 +101,13 @@ export default function SignupPage() {
                   required
                   value={email}
                   onChange={e => setEmail(e.target.value)}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 
+                  className="appearance-none block w-full px-3 py-2 border border-gray-300
                              dark:border-gray-700 dark:bg-gray-700 dark:text-white
-                             rounded-md shadow-sm placeholder-gray-400 
+                             rounded-md shadow-sm placeholder-gray-400
                              focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                 />
               </div>
             </div>
-
             <div>
               <label
                 htmlFor="password"
@@ -142,29 +124,27 @@ export default function SignupPage() {
                   required
                   value={password}
                   onChange={e => setPassword(e.target.value)}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 
+                  className="appearance-none block w-full px-3 py-2 border border-gray-300
                              dark:border-gray-700 dark:bg-gray-700 dark:text-white
-                             rounded-md shadow-sm placeholder-gray-400 
+                             rounded-md shadow-sm placeholder-gray-400
                              focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                 />
               </div>
             </div>
-
             <div>
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full flex justify-center py-2 px-4 border border-transparent 
-                         rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 
-                         hover:bg-indigo-700 focus:outline-none focus:ring-2 
-                         focus:ring-offset-2 focus:ring-indigo-500 
+                className="w-full flex justify-center py-2 px-4 border border-transparent
+                         rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600
+                         hover:bg-indigo-700 focus:outline-none focus:ring-2
+                         focus:ring-offset-2 focus:ring-indigo-500
                          disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isLoading ? 'Creating account...' : 'Sign up'}
               </button>
             </div>
           </form>
-
           <div className="mt-6 relative">
             <div className="absolute inset-0 flex items-center">
               <div className="w-full border-t border-gray-300 dark:border-gray-700"></div>
@@ -175,11 +155,9 @@ export default function SignupPage() {
               </span>
             </div>
           </div>
-
           <div className="mt-6">
             <GoogleAuthButton />
           </div>
-
           <div className="mt-6">
             <p className="text-center text-sm text-gray-600 dark:text-gray-400">
               Already have an account?{' '}

@@ -1,16 +1,12 @@
-/* eslint-disable no-undef */
-/* eslint-disable react/jsx-no-undef */
+/* eslint-disable no-unused-vars */
 'use client';
-
 import { ITodo } from '@/types/todo';
 import { useState, KeyboardEvent } from 'react';
-import TodoItem from '../../../TodoItem';
-
+import TodoItem from './TodoItem';
 interface EditableTodoItemProps {
   todo: ITodo;
   onToggleComplete: () => void;
   onDelete: () => void;
-  // eslint-disable-next-line no-unused-vars
   onUpdate: (todo: ITodo, newTitle: string) => void;
 }
 export default function EditableTodoItem({
@@ -21,24 +17,20 @@ export default function EditableTodoItem({
 }: EditableTodoItemProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [editInput, setEditInput] = useState(todo.title);
-
   const handleEdit = () => {
     setIsEditing(true);
     setEditInput(todo.title);
   };
-
   const handleCancel = () => {
     setIsEditing(false);
     setEditInput(todo.title);
   };
-
   const handleSave = () => {
     if (editInput.trim()) {
       onUpdate(todo, editInput);
       setIsEditing(false);
     }
   };
-
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       handleSave();
@@ -46,7 +38,6 @@ export default function EditableTodoItem({
       handleCancel();
     }
   };
-
   if (isEditing) {
     return (
       <div className="flex items-center p-4 border-b border-gray-200 dark:border-gray-700">
@@ -75,7 +66,6 @@ export default function EditableTodoItem({
       </div>
     );
   }
-
   return (
     <TodoItem
       todo={todo}

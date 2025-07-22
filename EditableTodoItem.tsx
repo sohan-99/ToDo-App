@@ -1,19 +1,13 @@
 'use client';
-
 import { useState, KeyboardEvent } from 'react';
 import { ITodo } from '@/types/todo';
 import TodoItem from './TodoItem';
-
 interface EditableTodoItemProps {
   todo: ITodo;
   onToggleComplete: (todo: ITodo) => void;
   onDelete: (id: string | number) => void;
   onUpdate: (todo: ITodo, newTitle: string) => void;
 }
-
-/**
- * An editable todo item that supports viewing and editing modes
- */
 export default function EditableTodoItem({
   todo,
   onToggleComplete,
@@ -22,24 +16,20 @@ export default function EditableTodoItem({
 }: EditableTodoItemProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [editInput, setEditInput] = useState(todo.title);
-
   const handleEdit = () => {
     setIsEditing(true);
     setEditInput(todo.title);
   };
-
   const handleCancel = () => {
     setIsEditing(false);
     setEditInput(todo.title);
   };
-
   const handleSave = () => {
     if (editInput.trim()) {
       onUpdate(todo, editInput);
       setIsEditing(false);
     }
   };
-
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       handleSave();
@@ -47,7 +37,6 @@ export default function EditableTodoItem({
       handleCancel();
     }
   };
-
   if (isEditing) {
     return (
       <div className="flex items-center p-4 border-b border-gray-200 dark:border-gray-700">
@@ -76,7 +65,6 @@ export default function EditableTodoItem({
       </div>
     );
   }
-
   return (
     <TodoItem
       todo={todo}

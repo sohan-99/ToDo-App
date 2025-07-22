@@ -1,11 +1,9 @@
 import { NextResponse } from 'next/server';
 import { connectToDatabase } from '@/lib/mongodb';
 import mongoose from 'mongoose';
-
 export async function GET() {
   try {
     const connection = await connectToDatabase();
-
     return NextResponse.json(
       {
         status: 'Connected to MongoDB',
@@ -16,8 +14,6 @@ export async function GET() {
       { status: 200 }
     );
   } catch (error) {
-    // console.error('MongoDB connection error:', error);
-
     return NextResponse.json(
       {
         status: 'Error connecting to MongoDB',

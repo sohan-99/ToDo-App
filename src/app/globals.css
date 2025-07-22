@@ -16,7 +16,6 @@
   --input-border: #d1d5db;
 }
 
-/* Theme variables */
 :root {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -60,18 +59,15 @@ body {
     sans-serif;
 }
 
-/* Custom checkbox styling */
 input[type='checkbox'] {
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
-/* Button transitions */
 button {
   transition: all 0.2s ease;
 }
 
-/* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -98,13 +94,11 @@ button {
   background: #6b7280;
 }
 
-/* Custom selection color */
 ::selection {
   background-color: var(--primary);
   color: white;
 }
 
-/* Animations */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -124,7 +118,6 @@ button {
   transition-duration: 150ms;
 }
 
-/* Dark mode specific styles */
 .dark .bg-gray-750 {
   background-color: #283548;
 }

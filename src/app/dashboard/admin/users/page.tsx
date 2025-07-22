@@ -324,23 +324,23 @@ export default function AdminUsersPage() {
     <div>
       {/* Error notification */}
       {error && (
-        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 p-4 rounded-md mb-4 flex justify-between items-center">
-          <p className="text-red-700 dark:text-red-400">{error}</p>
-          <button onClick={() => setError(null)} className="text-gray-500 hover:text-gray-700">
+        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 p-2 sm:p-4 rounded-md mb-4 flex justify-between items-center">
+          <p className="text-xs sm:text-sm text-red-700 dark:text-red-400">{error}</p>
+          <button onClick={() => setError(null)} className="text-gray-500 hover:text-gray-700 ml-2">
             &times;
           </button>
         </div>
       )}
 
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Manage Users</h1>
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+        <h1 className="text-xl sm:text-2xl font-bold">Manage Users</h1>
 
-        <div className="flex space-x-2">
+        <div className="flex flex-wrap gap-2 w-full sm:w-auto">
           {selectedUsers.length > 0 && (
             <button
               onClick={handleBulkDelete}
               disabled={deleteLoading}
-              className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="inline-flex items-center px-3 py-1.5 sm:px-4 sm:py-2 border border-transparent rounded-md shadow-sm text-xs sm:text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {deleteLoading ? 'Deleting...' : `Delete Selected (${selectedUsers.length})`}
             </button>
@@ -348,7 +348,7 @@ export default function AdminUsersPage() {
 
           <button
             onClick={() => setShowCreateForm(!showCreateForm)}
-            className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            className="inline-flex items-center px-3 py-1.5 sm:px-4 sm:py-2 border border-transparent rounded-md shadow-sm text-xs sm:text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
           >
             {showCreateForm ? 'Cancel' : 'Create/Update User'}
           </button>
@@ -357,17 +357,17 @@ export default function AdminUsersPage() {
 
       {/* Create User Form */}
       {showCreateForm && (
-        <div className="bg-white dark:bg-gray-700 p-4 rounded-md shadow-md mb-6">
-          <h2 className="text-lg font-semibold mb-4">Create or Update User</h2>
-          <p className="text-sm text-gray-500 mb-4">
+        <div className="bg-white dark:bg-gray-700 p-3 sm:p-4 rounded-md shadow-md mb-6 overflow-x-auto">
+          <h2 className="text-base sm:text-lg font-semibold mb-2 sm:mb-4">Create or Update User</h2>
+          <p className="text-xs sm:text-sm text-gray-500 mb-3 sm:mb-4">
             If the email already exists, the user will be updated instead of creating a new one.
           </p>
-          <form onSubmit={handleCreateUser} className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <form onSubmit={handleCreateUser} className="space-y-3 sm:space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
               <div>
                 <label
                   htmlFor="name"
-                  className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                  className="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300"
                 >
                   Name
                 </label>
@@ -377,7 +377,7 @@ export default function AdminUsersPage() {
                   value={createUserData.name}
                   onChange={e => setCreateUserData({ ...createUserData, name: e.target.value })}
                   required
-                  className="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:text-white"
+                  className="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm py-1.5 sm:py-2 px-2 sm:px-3 text-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:text-white"
                 />
               </div>
               <div>
@@ -458,11 +458,11 @@ export default function AdminUsersPage() {
 
             {/* Admin Permissions Section */}
             {createUserData.role === 'admin' && (
-              <div className="mt-4 border-t pt-4 border-gray-200 dark:border-gray-700">
-                <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <div className="mt-3 sm:mt-4 border-t pt-3 sm:pt-4 border-gray-200 dark:border-gray-700">
+                <h3 className="text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Admin Permissions
                 </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   <label className="flex items-center">
                     <input
                       type="checkbox"
@@ -476,7 +476,7 @@ export default function AdminUsersPage() {
                           },
                         })
                       }
-                      className="mr-2 h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded dark:border-gray-700 dark:bg-gray-800"
+                      className="mr-2 h-3.5 w-3.5 sm:h-4 sm:w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded dark:border-gray-700 dark:bg-gray-800"
                     />
                     <span>Can update user info</span>
                   </label>
@@ -539,7 +539,7 @@ export default function AdminUsersPage() {
               <button
                 type="submit"
                 disabled={createLoading}
-                className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="inline-flex justify-center py-1.5 sm:py-2 px-3 sm:px-4 border border-transparent shadow-sm text-xs sm:text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {createLoading ? 'Processing...' : 'Save User'}
               </button>
@@ -549,10 +549,10 @@ export default function AdminUsersPage() {
       )}
 
       <div className="bg-white dark:bg-gray-700 shadow-md rounded-lg overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+        <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700 table-auto">
           <thead className="bg-gray-50 dark:bg-gray-800">
             <tr>
-              <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+              <th className="px-2 sm:px-3 md:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                 <input
                   type="checkbox"
                   onChange={e => {
@@ -562,25 +562,25 @@ export default function AdminUsersPage() {
                       setSelectedUsers([]);
                     }
                   }}
-                  className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded dark:border-gray-700 dark:bg-gray-800"
+                  className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded dark:border-gray-700 dark:bg-gray-800"
                 />
               </th>
-              <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+              <th className="px-2 sm:px-3 md:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                 Name
               </th>
-              <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider hidden md:table-cell">
+              <th className="px-2 sm:px-3 md:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider hidden md:table-cell">
                 Email
               </th>
-              <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+              <th className="px-2 sm:px-3 md:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                 Role
               </th>
-              <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider hidden sm:table-cell">
+              <th className="px-2 sm:px-3 md:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider hidden sm:table-cell">
                 Joined
               </th>
-              <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider hidden lg:table-cell">
+              <th className="px-2 sm:px-3 md:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider hidden lg:table-cell">
                 Permissions
               </th>
-              <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+              <th className="px-2 sm:px-3 md:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                 Actions
               </th>
             </tr>
@@ -588,24 +588,24 @@ export default function AdminUsersPage() {
           <tbody className="bg-white dark:bg-gray-700 divide-y divide-gray-200 dark:divide-gray-700">
             {users.map(user => (
               <tr key={user._id}>
-                <td className="px-3 sm:px-6 py-2 sm:py-4 whitespace-nowrap">
+                <td className="px-2 sm:px-3 md:px-6 py-2 sm:py-4 whitespace-nowrap">
                   <input
                     type="checkbox"
                     checked={selectedUsers.includes(user._id)}
                     onChange={() => toggleUserSelection(user._id)}
-                    className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded dark:border-gray-700 dark:bg-gray-800"
+                    className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded dark:border-gray-700 dark:bg-gray-800"
                   />
                 </td>
-                <td className="px-3 sm:px-6 py-2 sm:py-4 whitespace-nowrap">
+                <td className="px-2 sm:px-3 md:px-6 py-2 sm:py-4 whitespace-nowrap">
                   {editingUser?.id === user._id ? (
                     <input
                       type="text"
                       value={editingUser.name}
                       onChange={e => setEditingUser({ ...editingUser, name: e.target.value })}
-                      className="w-full p-1 border border-gray-300 dark:border-gray-600 rounded dark:bg-gray-800 dark:text-white"
+                      className="w-full p-1 text-xs sm:text-sm border border-gray-300 dark:border-gray-600 rounded dark:bg-gray-800 dark:text-white"
                     />
                   ) : (
-                    <div className="text-sm font-medium text-gray-900 dark:text-white">
+                    <div className="text-xs sm:text-sm font-medium text-gray-900 dark:text-white">
                       {user.name}
                       <div className="md:hidden text-xs text-gray-500 dark:text-gray-400 mt-1">
                         {user.email}
@@ -613,21 +613,23 @@ export default function AdminUsersPage() {
                     </div>
                   )}
                 </td>
-                <td className="px-3 sm:px-6 py-2 sm:py-4 whitespace-nowrap hidden md:table-cell">
+                <td className="px-2 sm:px-3 md:px-6 py-2 sm:py-4 whitespace-nowrap hidden md:table-cell">
                   {editingUser?.id === user._id ? (
                     <input
                       type="email"
                       value={editingUser.email}
                       onChange={e => setEditingUser({ ...editingUser, email: e.target.value })}
-                      className="w-full p-1 border border-gray-300 dark:border-gray-600 rounded dark:bg-gray-800 dark:text-white"
+                      className="w-full p-1 text-xs sm:text-sm border border-gray-300 dark:border-gray-600 rounded dark:bg-gray-800 dark:text-white"
                     />
                   ) : (
-                    <div className="text-sm text-gray-500 dark:text-gray-300">{user.email}</div>
+                    <div className="text-xs sm:text-sm text-gray-500 dark:text-gray-300">
+                      {user.email}
+                    </div>
                   )}
                 </td>
-                <td className="px-3 sm:px-6 py-2 sm:py-4 whitespace-nowrap">
+                <td className="px-2 sm:px-3 md:px-6 py-2 sm:py-4 whitespace-nowrap">
                   <span
-                    className={`inline-flex items-center px-2 sm:px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                    className={`inline-flex items-center px-1.5 sm:px-2 md:px-2.5 py-0.5 rounded-full text-xs font-medium ${
                       user.role === 'super-admin'
                         ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300'
                         : user.role === 'admin'
@@ -638,45 +640,53 @@ export default function AdminUsersPage() {
                     {user.role}
                   </span>
                 </td>
-                <td className="px-3 sm:px-6 py-2 sm:py-4 whitespace-nowrap hidden sm:table-cell">
-                  <div className="text-sm text-gray-500 dark:text-gray-300">
+                <td className="px-2 sm:px-3 md:px-6 py-2 sm:py-4 whitespace-nowrap hidden sm:table-cell">
+                  <div className="text-xs sm:text-sm text-gray-500 dark:text-gray-300">
                     {new Date(user.createdAt).toLocaleDateString()}
                   </div>
                 </td>
-                <td className="px-3 sm:px-6 py-2 sm:py-4 whitespace-nowrap hidden lg:table-cell">
+                <td className="px-2 sm:px-3 md:px-6 py-2 sm:py-4 whitespace-nowrap hidden lg:table-cell">
                   {user.role === 'super-admin' ? (
                     <div className="text-xs text-red-600 dark:text-red-400 font-medium">
                       Full Access
                     </div>
                   ) : user.role === 'admin' ? (
-                    <div className="flex flex-col gap-1">
+                    <div className="flex flex-col gap-0.5 sm:gap-1">
                       <span
                         className={`text-xs ${user.adminPermissions?.canUpdateUserInfo ? 'text-green-600 dark:text-green-400' : 'text-gray-400 dark:text-gray-500'}`}
                       >
-                        {user.adminPermissions?.canUpdateUserInfo ? '✓' : '✗'} Can update user info
+                        {user.adminPermissions?.canUpdateUserInfo ? '✓' : '✗'}{' '}
+                        <span className="hidden sm:inline">Can update user info</span>
+                        <span className="inline sm:hidden">Update info</span>
                       </span>
                       <span
                         className={`text-xs ${user.adminPermissions?.canDeleteUsers ? 'text-green-600 dark:text-green-400' : 'text-gray-400 dark:text-gray-500'}`}
                       >
-                        {user.adminPermissions?.canDeleteUsers ? '✓' : '✗'} Can delete users
+                        {user.adminPermissions?.canDeleteUsers ? '✓' : '✗'}{' '}
+                        <span className="hidden sm:inline">Can delete users</span>
+                        <span className="inline sm:hidden">Delete users</span>
                       </span>
                       <span
                         className={`text-xs ${user.adminPermissions?.canPromoteToAdmin ? 'text-green-600 dark:text-green-400' : 'text-gray-400 dark:text-gray-500'}`}
                       >
-                        {user.adminPermissions?.canPromoteToAdmin ? '✓' : '✗'} Can promote to admin
+                        {user.adminPermissions?.canPromoteToAdmin ? '✓' : '✗'}{' '}
+                        <span className="hidden sm:inline">Can promote to admin</span>
+                        <span className="inline sm:hidden">Promote to admin</span>
                       </span>
                       <span
                         className={`text-xs ${user.adminPermissions?.canDemoteAdmins ? 'text-green-600 dark:text-green-400' : 'text-gray-400 dark:text-gray-500'}`}
                       >
-                        {user.adminPermissions?.canDemoteAdmins ? '✓' : '✗'} Can demote admins
+                        {user.adminPermissions?.canDemoteAdmins ? '✓' : '✗'}{' '}
+                        <span className="hidden sm:inline">Can demote admins</span>
+                        <span className="inline sm:hidden">Demote admins</span>
                       </span>
                     </div>
                   ) : (
                     <span className="text-xs text-gray-400 dark:text-gray-500">Standard user</span>
                   )}
                 </td>
-                <td className="px-3 sm:px-6 py-2 sm:py-4 whitespace-nowrap">
-                  <div className="flex items-center space-x-1 sm:space-x-2">
+                <td className="px-2 sm:px-3 md:px-6 py-2 sm:py-4 whitespace-nowrap">
+                  <div className="flex items-center gap-1 sm:space-x-2">
                     {editingUser?.id === user._id ? (
                       <>
                         <button
@@ -687,13 +697,13 @@ export default function AdminUsersPage() {
                             })
                           }
                           disabled={updateLoading}
-                          className="px-2 py-1 bg-green-600 text-white rounded hover:bg-green-700 text-xs"
+                          className="px-1.5 sm:px-2 py-1 bg-green-600 text-white rounded hover:bg-green-700 text-xs"
                         >
                           {updateLoading ? 'Saving...' : 'Save'}
                         </button>
                         <button
                           onClick={() => setEditingUser(null)}
-                          className="px-2 py-1 bg-gray-500 text-white rounded hover:bg-gray-600 text-xs"
+                          className="px-1.5 sm:px-2 py-1 bg-gray-500 text-white rounded hover:bg-gray-600 text-xs"
                         >
                           Cancel
                         </button>
@@ -703,7 +713,7 @@ export default function AdminUsersPage() {
                         <select
                           value={user.role}
                           onChange={e => handleRoleChange(user._id, e.target.value as UserRole)}
-                          className="block w-full px-2 py-1 text-sm border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 dark:bg-gray-800 dark:text-white dark:border-gray-700"
+                          className="block w-full px-1 sm:px-2 py-1 text-xs sm:text-sm border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 dark:bg-gray-800 dark:text-white dark:border-gray-700"
                           disabled={
                             user._id === session?.user?.id || // Can't change own role
                             // Admins can only change roles if they have permissions
@@ -736,9 +746,9 @@ export default function AdminUsersPage() {
                         {/* Admin permissions settings - only visible for super-admin when viewing admin users */}
                         {session?.user?.role === 'super-admin' && user.role === 'admin' && (
                           <div className="mt-2 p-2 bg-gray-100 dark:bg-gray-800 rounded text-xs">
-                            <div className="font-medium mb-1">Admin Permissions:</div>
+                            <div className="font-medium mb-1 text-xs">Admin Permissions:</div>
                             {/* Quick Permission Presets */}
-                            <div className="flex space-x-2 mb-2">
+                            <div className="flex flex-wrap gap-2 mb-2">
                               <button
                                 onClick={async () => {
                                   try {
@@ -781,7 +791,7 @@ export default function AdminUsersPage() {
                                     setError(err.message || 'Failed to update permissions');
                                   }
                                 }}
-                                className="px-1.5 py-0.5 bg-blue-500 text-white rounded text-xs hover:bg-blue-600"
+                                className="px-1.5 py-0.5 bg-blue-500 text-white rounded text-xs hover:bg-blue-600 whitespace-nowrap"
                               >
                                 Edit-only
                               </button>
@@ -827,13 +837,13 @@ export default function AdminUsersPage() {
                                     setError(err.message || 'Failed to update permissions');
                                   }
                                 }}
-                                className="px-1.5 py-0.5 bg-purple-500 text-white rounded text-xs hover:bg-purple-600"
+                                className="px-1.5 py-0.5 bg-purple-500 text-white rounded text-xs hover:bg-purple-600 whitespace-nowrap"
                               >
                                 Full Access
                               </button>
                             </div>
                             <div className="flex flex-col space-y-1">
-                              <label className="flex items-center">
+                              <label className="flex items-center text-xs">
                                 <input
                                   type="checkbox"
                                   checked={user.adminPermissions?.canUpdateUserInfo ?? true}
@@ -890,11 +900,11 @@ export default function AdminUsersPage() {
                                       setError(err.message || 'Failed to update admin permissions');
                                     }
                                   }}
-                                  className="mr-2 h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded dark:border-gray-700 dark:bg-gray-800"
+                                  className="mr-2 h-3.5 w-3.5 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded dark:border-gray-700 dark:bg-gray-800"
                                 />
                                 <span>Can update user info</span>
                               </label>
-                              <label className="flex items-center">
+                              <label className="flex items-center text-xs">
                                 <input
                                   type="checkbox"
                                   checked={user.adminPermissions?.canDeleteUsers ?? false}
@@ -951,12 +961,12 @@ export default function AdminUsersPage() {
                                       setError(err.message || 'Failed to update admin permissions');
                                     }
                                   }}
-                                  className="mr-2 h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded dark:border-gray-700 dark:bg-gray-800"
+                                  className="mr-2 h-3.5 w-3.5 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded dark:border-gray-700 dark:bg-gray-800"
                                 />
                                 <span>Can delete users</span>
                               </label>
 
-                              <label className="flex items-center">
+                              <label className="flex items-center text-xs">
                                 <input
                                   type="checkbox"
                                   checked={user.adminPermissions?.canPromoteToAdmin ?? false}
@@ -1012,12 +1022,12 @@ export default function AdminUsersPage() {
                                       setError(err.message || 'Failed to update admin permissions');
                                     }
                                   }}
-                                  className="mr-2 h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded dark:border-gray-700 dark:bg-gray-800"
+                                  className="mr-2 h-3.5 w-3.5 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded dark:border-gray-700 dark:bg-gray-800"
                                 />
                                 <span>Can promote to admin</span>
                               </label>
 
-                              <label className="flex items-center">
+                              <label className="flex items-center text-xs">
                                 <input
                                   type="checkbox"
                                   checked={user.adminPermissions?.canDemoteAdmins ?? false}
@@ -1073,7 +1083,7 @@ export default function AdminUsersPage() {
                                       setError(err.message || 'Failed to update admin permissions');
                                     }
                                   }}
-                                  className="mr-2 h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded dark:border-gray-700 dark:bg-gray-800"
+                                  className="mr-2 h-3.5 w-3.5 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded dark:border-gray-700 dark:bg-gray-800"
                                 />
                                 <span>Can demote admins</span>
                               </label>

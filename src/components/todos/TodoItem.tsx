@@ -1,18 +1,13 @@
+/* eslint-disable no-unused-vars */
 'use client';
-
 import { memo } from 'react';
 import { ITodo } from '@/types/todo';
-
 interface TodoItemProps {
   todo: ITodo;
   onToggleComplete: (todo: ITodo) => void;
   onDelete: (id: string | number) => void;
   onEdit: (todo: ITodo) => void;
 }
-
-/**
- * Memoized TodoItem component for better performance with large lists
- */
 const TodoItem = memo(function TodoItem({
   todo,
   onToggleComplete,
@@ -83,5 +78,4 @@ const TodoItem = memo(function TodoItem({
     </div>
   );
 });
-
 export default TodoItem;

@@ -1,15 +1,12 @@
 'use client';
-
 import { useState } from 'react';
 import { signOut, useSession } from 'next-auth/react';
 import Link from 'next/link';
 import ThemeToggle from './ThemeToggle';
-
 export default function Header() {
   const { data: session, status } = useSession();
   const isLoading = status === 'loading';
   const [dropdownOpen, setDropdownOpen] = useState(false);
-
   return (
     <div className="bg-white dark:bg-gray-800 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -35,10 +32,8 @@ export default function Header() {
               </Link>
             </div>
           </div>
-
           <div className="flex items-center space-x-4">
             <ThemeToggle />
-
             {isLoading ? (
               <div className="h-8 w-20 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
             ) : session ? (
@@ -74,7 +69,6 @@ export default function Header() {
                       />
                     </svg>
                   </button>
-
                   {dropdownOpen && (
                     <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg z-10 py-1 border dark:border-gray-700">
                       <Link

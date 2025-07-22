@@ -1,19 +1,15 @@
 'use client';
-
 import { signIn } from 'next-auth/react';
 import { useState } from 'react';
-
 type GoogleAuthButtonProps = {
   callbackUrl?: string;
   className?: string;
 };
-
 export default function GoogleAuthButton({
   callbackUrl = '/',
   className = '',
 }: GoogleAuthButtonProps) {
   const [isLoading, setIsLoading] = useState(false);
-
   const handleGoogleSignIn = async () => {
     setIsLoading(true);
     try {
@@ -23,16 +19,15 @@ export default function GoogleAuthButton({
       setIsLoading(false);
     }
   };
-
   return (
     <button
       type="button"
       onClick={handleGoogleSignIn}
       disabled={isLoading}
-      className={`w-full flex items-center justify-center py-2 px-4 border border-gray-300 
-                 dark:border-gray-700 rounded-md shadow-sm text-sm font-medium 
-                 text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 
-                 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none 
+      className={`w-full flex items-center justify-center py-2 px-4 border border-gray-300
+                 dark:border-gray-700 rounded-md shadow-sm text-sm font-medium
+                 text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800
+                 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none
                  focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500
                  disabled:opacity-50 disabled:cursor-not-allowed ${className}`}
     >

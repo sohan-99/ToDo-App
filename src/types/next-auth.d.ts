@@ -1,13 +1,11 @@
 import 'next-auth';
 import { UserRole, AdminPermissions } from '@/models/user.interface';
-
 declare module 'next-auth' {
   interface User {
     id: string;
     role?: UserRole;
     adminPermissions?: AdminPermissions;
   }
-
   interface Session {
     user: {
       id: string;
@@ -19,7 +17,6 @@ declare module 'next-auth' {
     };
   }
 }
-
 declare module 'next-auth/jwt' {
   interface JWT {
     id: string;

@@ -3,37 +3,25 @@ import { connectToDatabase } from '@/lib/mongodb';
 import UserModel from '@/models/User';
 import { auth } from '@/app/api/auth/[...nextauth]/route';
 import { UserRole, AdminPermissions } from '@/models/user.interface';
-
 interface Params {
   params: {
     id: string;
   };
 }
-
-// PUT /api/admin/users/:id - Update a user role
 export async function PUT(req: NextRequest, { params }: Params) {
   try {
     const session = await auth();
-
-    // Check authentication and proper permissions
     if (!session || (session.user.role !== 'admin' && session.user.role !== 'super-admin')) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
     }
-
     const userId = params.id;
-
     if (!userId) {
       return NextResponse.json({ error: 'User ID is required' }, { status: 400 });
     }
-
     await connectToDatabase();
-
-    // Get current admin's information with permissions
     const currentAdmin =
       session.user.role === 'admin' ? await UserModel.findById(session.user.id) : null;
-
     const adminPermissions = currentAdmin?.adminPermissions as AdminPermissions | undefined;
-
     const {
       role,
       name,
@@ -45,19 +33,13 @@ export async function PUT(req: NextRequest, { params }: Params) {
       email?: string;
       adminPermissions?: AdminPermissions;
     };
-
-    // For role updates, validate the requested role
     if (role && !['user', 'admin', 'super-admin'].includes(role)) {
       return NextResponse.json({ error: 'Valid role is required' }, { status: 400 });
     }
-
-    // Find the user to update
     const userToUpdate = await UserModel.findById(userId);
     if (!userToUpdate) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
-
-    // Prepare update object
     const updateData: {
       role?: UserRole;
       name?: string;
@@ -65,14 +47,10 @@ export async function PUT(req: NextRequest, { params }: Params) {
       adminPermissions?: AdminPermissions | null;
       $unset?: { adminPermissions?: string };
     } = {};
-
     if (role) updateData.role = role;
     if (name) updateData.name = name;
     if (email) updateData.email = email;
-
-    // Handle admin permissions
     if (role === 'admin') {
-      // Set admin permissions if provided, or use defaults if not
       updateData.adminPermissions = newAdminPermissions || {
         canUpdateUserInfo: true,
         canDeleteUsers: false,
@@ -80,21 +58,13 @@ export async function PUT(req: NextRequest, { params }: Params) {
         canDemoteAdmins: false,
       };
     } else if (role === 'user' || role === 'super-admin') {
-      // Remove adminPermissions field completely for non-admin roles
       updateData.$unset = { adminPermissions: '' };
     }
-
-    // Handle admin permissions updates for existing admins (without role change)
     if (!role && userToUpdate.role === 'admin' && newAdminPermissions) {
       updateData.adminPermissions = newAdminPermissions;
     }
-
-    // Apply role-based permissions
     if (session.user.role === 'super-admin') {
-      // Super Admin can update any user information (role, name, email, permissions)
-      // No restrictions for super-admin
     } else if (session.user.role === 'admin') {
-      // Check if admin has permission to update user info
       if ((name || email) && (!adminPermissions || !adminPermissions.canUpdateUserInfo)) {
         return NextResponse.json(
           {
@@ -103,22 +73,9 @@ export async function PUT(req: NextRequest, { params }: Params) {
           { status: 403 }
         );
       }
-
-      // Check if admin can update user roles
       if (role) {
-        // Check if promoting to admin
         if (role === 'admin' && userToUpdate.role === 'user') {
-          if (!adminPermissions?.canPromoteToAdmin) {
-            return NextResponse.json(
-              {
-                error: 'You do not have permission to promote users to admin',
-              },
-              { status: 403 }
-            );
-          }
-        }
-        // Check if demoting from admin
-        else if (role === 'user' && userToUpdate.role === 'admin') {
+        } else if (role === 'user' && userToUpdate.role === 'admin') {
           if (!adminPermissions?.canDemoteAdmins) {
             return NextResponse.json(
               {
@@ -127,9 +84,7 @@ export async function PUT(req: NextRequest, { params }: Params) {
               { status: 403 }
             );
           }
-        }
-        // Admin cannot promote to super-admin
-        else if (role === 'super-admin') {
+        } else if (role === 'super-admin') {
           return NextResponse.json(
             {
               error: 'Only super-admins can promote users to super-admin',
@@ -138,10 +93,7 @@ export async function PUT(req: NextRequest, { params }: Params) {
           );
         }
       }
-
-      // Check if admin can update admin permissions
       if (newAdminPermissions) {
-        // Only allow updating admin permissions if user is an admin and current admin has permission to promote/demote
         if (userToUpdate.role !== 'admin' && !adminPermissions?.canPromoteToAdmin) {
           return NextResponse.json(
             {
@@ -151,8 +103,6 @@ export async function PUT(req: NextRequest, { params }: Params) {
           );
         }
       }
-
-      // Admins can only update regular users' information
       if (userToUpdate.role !== 'user') {
         return NextResponse.json(
           {
@@ -162,62 +112,41 @@ export async function PUT(req: NextRequest, { params }: Params) {
         );
       }
     }
-
-    // For removing fields, we need to use $unset operator directly
     if (updateData.$unset) {
-      // If we need to remove fields, handle it separately
       await UserModel.updateOne({ _id: userId }, { $unset: updateData.$unset });
-      delete updateData.$unset; // Remove $unset from the updateData
+      delete updateData.$unset;
     }
-
     const user = await UserModel.findByIdAndUpdate(userId, updateData, {
       new: true,
       select: '-password',
     });
-
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
-
     return NextResponse.json(user);
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Internal server error';
     return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }
-
-// DELETE /api/admin/users/:id - Delete a user
 export async function DELETE(req: NextRequest, { params }: Params) {
   try {
     const session = await auth();
-
-    // Check authentication and proper permissions
     if (!session || (session.user.role !== 'admin' && session.user.role !== 'super-admin')) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
     }
-
     const userId = params.id;
-
     if (!userId) {
       return NextResponse.json({ error: 'User ID is required' }, { status: 400 });
     }
-
     await connectToDatabase();
-
-    // Get current admin's information with permissions if admin
     const currentAdmin =
       session.user.role === 'admin' ? await UserModel.findById(session.user.id) : null;
-
     const adminPermissions = currentAdmin?.adminPermissions as AdminPermissions | undefined;
-
-    // Check if user to delete is a super-admin
     const userToDelete = await UserModel.findById(userId);
-
     if (!userToDelete) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
-
-    // Only super-admins can delete other super-admins
     if (userToDelete.role === 'super-admin' && session.user.role !== 'super-admin') {
       return NextResponse.json(
         {
@@ -226,8 +155,6 @@ export async function DELETE(req: NextRequest, { params }: Params) {
         { status: 403 }
       );
     }
-
-    // Don't allow users to delete themselves
     if (userId === session.user.id) {
       return NextResponse.json(
         {
@@ -236,12 +163,7 @@ export async function DELETE(req: NextRequest, { params }: Params) {
         { status: 400 }
       );
     }
-
-    // Check role-based permissions:
-    // 1. Admin can only delete regular users if they have the permission
-    // 2. Super Admin can delete anyone
     if (session.user.role === 'admin') {
-      // Check if admin has delete permission
       if (!adminPermissions || !adminPermissions.canDeleteUsers) {
         return NextResponse.json(
           {
@@ -250,8 +172,6 @@ export async function DELETE(req: NextRequest, { params }: Params) {
           { status: 403 }
         );
       }
-
-      // Even with delete permission, admins can only delete regular users
       if (userToDelete.role !== 'user') {
         return NextResponse.json(
           {
@@ -261,9 +181,7 @@ export async function DELETE(req: NextRequest, { params }: Params) {
         );
       }
     }
-
     await UserModel.findByIdAndDelete(userId);
-
     return NextResponse.json({
       message: `User deleted successfully`,
     });
