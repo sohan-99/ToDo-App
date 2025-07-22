@@ -131,28 +131,30 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                     {session?.user.role === 'super-admin' ? 'All Users' : 'Manage Users'}
                   </a>
                 </li>
-                <li>
-                  <a
-                    href="/dashboard/admin/tasks"
-                    className="flex items-center p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300"
-                    onClick={() => setSidebarOpen(false)}
-                  >
-                    <svg
-                      className="h-5 w-5 mr-2"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
+                {session?.user.role === 'super-admin' && (
+                  <li>
+                    <a
+                      href="/dashboard/admin/tasks"
+                      className="flex items-center p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300"
+                      onClick={() => setSidebarOpen(false)}
                     >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
-                      />
-                    </svg>
-                    Manage All Tasks
-                  </a>
-                </li>
+                      <svg
+                        className="h-5 w-5 mr-2"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                        />
+                      </svg>
+                      Manage All Tasks
+                    </a>
+                  </li>
+                )}
               </>
             )}
           </ul>

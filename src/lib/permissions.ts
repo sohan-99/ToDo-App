@@ -1,5 +1,8 @@
 import { UserRole, AdminPermissions } from '@/models/user.interface';
 export const RolePermissions = {
+  canManageAllTodos: (role: UserRole | undefined): boolean => {
+    return role === 'super-admin';
+  },
   canViewUsers: (role: UserRole | undefined): boolean => {
     return role === 'admin' || role === 'super-admin';
   },
