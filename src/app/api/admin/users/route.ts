@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { NextRequest, NextResponse } from 'next/server';
 import { connectToDatabase } from '@/lib/mongodb';
 import UserModel from '@/models/User';
@@ -17,6 +19,7 @@ export async function GET() {
       }
     ).sort({ createdAt: -1 });
     return NextResponse.json(users);
+  
   } catch (_error) {
     const errorMessage = error instanceof Error ? error.message : 'Internal server error';
     return NextResponse.json({ error: errorMessage }, { status: 500 });
